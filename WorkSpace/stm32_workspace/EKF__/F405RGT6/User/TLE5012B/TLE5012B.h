@@ -1,0 +1,40 @@
+#ifndef TLE5012B_H
+#define TLE5012B_H
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+#include "spi.h"
+#include "bsp_delay.h"
+
+#ifdef __cplusplus
+}
+#endif
+
+void TLE5012B_SPI_RDATA();
+extern float angle1;
+extern float angle2;
+extern int16_t ang_spd1;
+extern int16_t ang_spd2;
+//CS片选引脚
+#define TLE5012B_CS1_GPIO_PORT   GPIOA
+#define TLE5012B_CS1_GPIO_PIN    GPIO_PIN_4
+
+#define TLE5012B_CS2_GPIO_PORT   GPIOB
+#define TLE5012B_CS2_GPIO_PIN    GPIO_PIN_11
+
+//CS片选
+#define TLE5012B_CS1_HIGH()      HAL_GPIO_WritePin(TLE5012B_CS1_GPIO_PORT, TLE5012B_CS1_GPIO_PIN, GPIO_PIN_SET)
+#define TLE5012B_CS1_LOW()       HAL_GPIO_WritePin(TLE5012B_CS1_GPIO_PORT, TLE5012B_CS1_GPIO_PIN, GPIO_PIN_RESET)
+
+#define TLE5012B_CS2_HIGH()      HAL_GPIO_WritePin(TLE5012B_CS2_GPIO_PORT, TLE5012B_CS2_GPIO_PIN, GPIO_PIN_SET)
+#define TLE5012B_CS2_LOW()       HAL_GPIO_WritePin(TLE5012B_CS2_GPIO_PORT, TLE5012B_CS2_GPIO_PIN, GPIO_PIN_RESET)
+
+// 更换SPI MOSI GPIO模式
+#define TLE5012B_SPI_MOSI1_GPIO_IN()   {TLE5012B_CS1_GPIO_PORT->MODER &=~ (3<<(2*7));TLE5012B_CS1_GPIO_PORT->MODER |= (3<<(2*7));}
+#define TLE5012B_SPI_MOSI1_GPIO_OUT()   {TLE5012B_CS1_GPIO_PORT->MODER &=~ (3<<(2*7));TLE5012B_CS1_GPIO_PORT->MODER |= (2<<(2*7));}
+
+#define TLE5012B_SPI_MOSI2_GPIO_IN()   {GPIOC->MODER &=~ (3<<(2*3));GPIOC->MODER |= (3<<(2*3));}
+#define TLE5012B_SPI_MOSI2_GPIO_OUT()   {GPIOC->MODER &=~ (3<<(2*3));GPIOC->MODER |= (2<<(2*3));}
+#endif  // TLE5012B_H1

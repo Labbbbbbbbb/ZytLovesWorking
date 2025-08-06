@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        "calculate.h": "c",
+        "hwt101ct_sdk.h": "c",
+        "rs485.h": "c"
+    },
+    "C_Cpp.errorSquiggles": "disabled"
+}

@@ -1,0 +1,30 @@
+
+build/
+dist/
+*.exe
+# Node.js
+node_modules/
+npm-debug.log
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Java
+*.class
+*.jar
+
+
+
+/机械
+/姿态解算&运动估计
+/EC_resources/Install
+/EC_resources/tutorial/屏幕录制*
+/WorkSpace/sw_workspace
+/MachineLearning/Yolo/from_yufeng
+/WorkSpace/stm32_workspace/wheel_odom
+*.img
+*正点原子*
+/CQ09

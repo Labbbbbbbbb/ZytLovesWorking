@@ -1,0 +1,7 @@
+path: ../datasets/custom
+val: images/val
+train: images/train
+
+nc: 1
+names: ['kid']
+

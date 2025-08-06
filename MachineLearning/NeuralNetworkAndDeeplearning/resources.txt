@@ -1,0 +1,9 @@
+http://neuralnetworksanddeeplearning.com/index.html
+
+https://www.bilibili.com/video/BV1Ux411j7ri?buvid=XU2B19F2EDD8330EDBA6EC120F612D6CE4973&is_story_h5=false&mid=0ssMDbfyU%2Bf43a1P3RBXY38FTQ%2FSZMtL1rElX6M3iMo%3D&plat_id=168&share_from=ugc&share_medium=android&share_plat=android&share_session_id=e9c545f0-bf8b-4f72-99d0-f37b41d382b4&share_source=QQ&share_tag=s_i&spmid=main.my-history-search-result.option-more.0&timestamp=1732608943&unique_k=12rMOqb&up_id=88461692&vd_source=1a6677185aa0e41216fcb384caf3a7ee
+
+https://blog.csdn.net/qq_64685283/article/details/138220984
+https://blog.csdn.net/weixin_47872288/article/details/130368368
+https://blog.csdn.net/didiaopao/article/details/119954291
+【目标检测 YOLOv5 开源代码项目调试与讲解实战【土堆 x 布尔艺数】】 https://www.bilibili.com/video/BV1tf4y1t7ru/?p=10&share_source=copy_web
+https://blog.csdn.net/weixin_43694096/article/details/124378167

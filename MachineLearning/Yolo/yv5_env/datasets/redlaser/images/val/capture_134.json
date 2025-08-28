@@ -1,0 +1,39 @@
+{
+  "version": "3.1.1",
+  "flags": {},
+  "shapes": [
+    {
+      "label": "redlaser",
+      "score": null,
+      "points": [
+        [
+          242.50936329588015,
+          124.7752808988764
+        ],
+        [
+          251.87265917602997,
+          124.7752808988764
+        ],
+        [
+          251.87265917602997,
+          136.57303370786516
+        ],
+        [
+          242.50936329588015,
+          136.57303370786516
+        ]
+      ],
+      "group_id": null,
+      "description": "",
+      "difficult": false,
+      "shape_type": "rectangle",
+      "flags": {},
+      "attributes": {},
+      "kie_linking": []
+    }
+  ],
+  "imagePath": "capture_134.jpg",
+  "imageData": null,
+  "imageHeight": 240,
+  "imageWidth": 400
+}

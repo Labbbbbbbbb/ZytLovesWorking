@@ -15,8 +15,8 @@
 #define IIC_SCL_Port GPIOB /* GPIO端口 */
 #define IIC_SDA_Port GPIOB
 #define RCC_IIC_ENABLE __HAL_RCC_GPIOB_CLK_ENABLE() /* GPIO端口时钟 */
-#define IIC_SCL_Pin GPIO_PIN_9                      /* 连接到SCL时钟线的GPIO */
-#define IIC_SDA_Pin GPIO_PIN_8                      /* 连接到SDA数据线的GPIO */
+#define IIC_SCL_Pin GPIO_PIN_6                      /* 连接到SCL时钟线的GPIO */
+#define IIC_SDA_Pin GPIO_PIN_7                      /* 连接到SDA数据线的GPIO */
 
 #define IIC_SCL(x)                                                                                                                            \
     do                                                                                                                                        \

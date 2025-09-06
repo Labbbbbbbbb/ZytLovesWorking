@@ -25,3 +25,25 @@
 虚拟串口参考资料如下
 
 [STM32 USB使用记录：使用CDC类虚拟串口（VCP）进行通讯_stm32 usb使用记录:使用cdc类虚拟串口(vcp)进行通讯-CSDN博客](https://blog.csdn.net/Naisu_kun/article/details/118192032)
+
+
+
+
+
+
+
+stlink固件指路：
+
+![image-20250906202555996](F:\ITS_Log\PCB\notes\assets\image-20250906202555996.png)
+
+stlinkv2.1固件中有一个bin文件，用stlink的swd口借助Stm32CubeProg烧录进去即可，然后转成usb进行Stlink_Update，对于没有新版驱动的电脑，驱动在brochure那边，有一个stlinkv2.1的用户资料。
+
+
+
+zdiy1v2.0的结果是可以烧录，stlink上的串口也可以用，但是VCP用不了，有可能是因为USB+-线上没有过电阻以及上拉，下图为立创广场上的c8t6最小系统板图
+
+
+
+![image-20250906202513744](F:\ITS_Log\PCB\notes\assets\image-20250906202513744.png)
+
+by the way，据两位老凳说烧录最好也是得接上电阻才能用，下次一起注意一下

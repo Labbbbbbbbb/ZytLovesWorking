@@ -21,14 +21,15 @@
 #include "spi.h"
 #include "tim.h"
 #include "usart.h"
-#include "usb.h"
 #include "gpio.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "mpu6050.h"
 #include "io_retargetToUart.h"
-#include <stdio.h>
+//#include <stdio.h>
+//#include "usbd_cdc_if.h"
+#include "oled.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -61,6 +62,7 @@ void SystemClock_Config(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 uint8_t flag = 0;
+
 /* USER CODE END 0 */
 
 /**
@@ -69,6 +71,7 @@ uint8_t flag = 0;
   */
 int main(void)
 {
+
   /* USER CODE BEGIN 1 */
 
   /* USER CODE END 1 */
@@ -94,31 +97,37 @@ int main(void)
   MX_SPI1_Init();
   MX_USART1_UART_Init();
   MX_USART3_UART_Init();
-  MX_USB_PCD_Init();
   MX_TIM1_Init();
   MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
   MPU_Init();
+  SPI_PIN_Init();
+  OLED_Init();
+	//uint8_t TX[] = "abc\r\n";
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-      
+    MPU_Data_Get();
+    // printf("Accel: X=%.2fg, Y=%.2fg, Z=%.2fg\n", imu_data.accel_x, imu_data.accel_y, imu_data.accel_z);
+    // printf("Gyro: X=%.2f°/s, Y=%.2f°/s, Z=%.2f°/s\n", imu_data.gyro_x, imu_data.gyro_y, imu_data.gyro_z);
+    // printf("Pitch: %.2f°, Roll: %.2f°, Yaw: %.2f°\n", imu_data.pitch, imu_data.roll, imu_data.yaw);
+    printf("Pitch: %.2f°\n", imu_data.pitch);
 
-      // 读取传感器数�?
-      //MPU_Data_Get();
-
-      // 打印数据
-      // printf("Accel: X=%.2fg, Y=%.2fg, Z=%.2fg\n", imu_data.accel_x, imu_data.accel_y, imu_data.accel_z);
-      // printf("Gyro: X=%.2f°/s, Y=%.2f°/s, Z=%.2f°/s\n", imu_data.gyro_x, imu_data.gyro_y, imu_data.gyro_z);
-      //printf("Pitch: %.2f°, Roll: %.2f°, Yaw: %.2f°\n", imu_data.pitch, imu_data.roll, imu_data.yaw);
-      //printf("%f\n", imu_data.accel_x);
-      printf("%d\n", flag);
-      // 延时
-      HAL_Delay(100);
-
+    //printf("%f\n", imu_data.accel_x);
+    //printf("hello%d\n", flag);
+    //CDC_Transmit_FS(TX, 5);
+    HAL_Delay(100);
+    OLED_Refresh();
+    
+    OLED_ShowString(0,0,"pitch:", 16);
+    OLED_ShowString(0,30,"roll:", 16);
+    OLED_ShowNum(50,0,(int)imu_data.pitch,5, 16);
+    OLED_ShowNum(50,30,(int)imu_data.roll,5, 16);
+    
+    OLED_Refresh();
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -134,7 +143,6 @@ void SystemClock_Config(void)
 {
   RCC_OscInitTypeDef RCC_OscInitStruct = {0};
   RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
-  RCC_PeriphCLKInitTypeDef PeriphClkInit = {0};
 
   /** Initializes the RCC Oscillators according to the specified parameters
   * in the RCC_OscInitTypeDef structure.
@@ -161,12 +169,6 @@ void SystemClock_Config(void)
   RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
 
   if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_2) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_USB;
-  PeriphClkInit.UsbClockSelection = RCC_USBCLKSOURCE_PLL_DIV1_5;
-  if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK)
   {
     Error_Handler();
   }
@@ -220,8 +222,7 @@ void Error_Handler(void)
   }
   /* USER CODE END Error_Handler_Debug */
 }
-
-#ifdef  USE_FULL_ASSERT
+#ifdef USE_FULL_ASSERT
 /**
   * @brief  Reports the name of the source file and the source line number
   *         where the assert_param error has occurred.

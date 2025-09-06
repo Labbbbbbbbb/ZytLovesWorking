@@ -62,6 +62,8 @@ STM32用的**CubeMX**是ST公司出品的一款C代码生成器软件，它的�
 
 或点击群里的安装包
 
+![image-20250904114418972](F:\ITS_Log\EC_resources\tutorial\assets\image-20250904114418972.png)
+
 选项默认即可，非常简单
 
 EIDE是Vscode的一个插件，它使vscode可以实现单片机编程IDE的功能，在左边工具栏里点这个![image-20250831161726901](F:\ITS_Log\EC_resources\tutorial\assets\image-20250831161726901.png)图标，这是管理拓展的地方
@@ -104,6 +106,8 @@ vscode中还有很多好用的插件，下载如下几个
 
 或者找群里的安装包也可以
 
+![image-20250904114526357](F:\ITS_Log\EC_resources\tutorial\assets\image-20250904114526357.png)
+
 运行安装程序，自行选择位置，建议不要装在C盘，最后把这一项勾上，就不需要再手动添加环境变量了
 
 ![image-20250831152450685](F:\ITS_Log\EC_resources\tutorial\assets\image-20250831152450685.png)
@@ -128,6 +132,8 @@ vscode中还有很多好用的插件，下载如下几个
 
 或者同样直接下载群里的压缩包
 
+![image-20250904114531945](F:\ITS_Log\EC_resources\tutorial\assets\image-20250904114531945.png)
+
 **解压**，**放到自己习惯放软件的地方**，然后添加环境变量：
 
 点进文件夹里，可以看到里面有个bin文件夹
@@ -151,3 +157,11 @@ F:\ProgramFile\openocd-20250710\OpenOCD-20250710-0.12.0\bin
 ```
 
 ![image-20250831155858685](F:\ITS_Log\EC_resources\tutorial\assets\image-20250831155858685.png)
+
+### 安装stlink驱动
+
+这是我们的烧录工具需要的驱动
+
+![image-20250904114708058](F:\ITS_Log\EC_resources\tutorial\assets\image-20250904114708058.png)
+
+点击这个可执行文件，按照它的指引走完即可，非常快。

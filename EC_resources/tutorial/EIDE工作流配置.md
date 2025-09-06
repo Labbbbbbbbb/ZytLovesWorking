@@ -42,7 +42,7 @@ Project Manager:配置项目信息，包括项目命名等
 
 ![image-20250902165038413](F:\ITS_Log\EC_resources\tutorial\assets\image-20250902165038413.png)
 
-左栏点击RCC, Debug选择Serial Wire, 选择调试模式为SWD模式
+左栏点击SYS, Debug选择Serial Wire, 选择调试模式为SWD模式
 
 ![image-20250902165339261](F:\ITS_Log\EC_resources\tutorial\assets\image-20250902165339261.png)
 

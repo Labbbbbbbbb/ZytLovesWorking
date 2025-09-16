@@ -122,6 +122,16 @@ vscode中还有很多好用的插件，下载如下几个
 
 将下载地址填入即可（填到`arm-none-eabi`的上一级即可）
 
+验证安装完成：win+R输入CMD
+
+![image-20250914145743875](F:\ITS_Log\EC_resources\tutorial\assets\image-20250914145743875.png)
+
+输入`arm-none-eabi-gcc --version`，，输出：
+
+![image-20250914150320875](F:\ITS_Log\EC_resources\tutorial\assets\image-20250914150320875.png)
+
+说明已经成功安装
+
 ### OpenOCD
 
 （Open On-Chip Debugger）开源片上调试器，debug时会用到它
@@ -158,10 +168,16 @@ F:\ProgramFile\openocd-20250710\OpenOCD-20250710-0.12.0\bin
 
 ![image-20250831155858685](F:\ITS_Log\EC_resources\tutorial\assets\image-20250831155858685.png)
 
+验证安装：在cmd中输入`openocd -v`
+
+![image-20250914150833831](F:\ITS_Log\EC_resources\tutorial\assets\image-20250914150833831.png)
+
+说明系统可以找到openocd，安装成功
+
 ### 安装stlink驱动
 
 这是我们的烧录工具需要的驱动
 
-![image-20250904114708058](F:\ITS_Log\EC_resources\tutorial\assets\image-20250904114708058.png)
+![image-20250914150614784](F:\ITS_Log\EC_resources\tutorial\assets\image-20250914150614784.png)
 
-点击这个可执行文件，按照它的指引走完即可，非常快。
+点击里面的`dpinst_amd64.exe`按照它的指引走完即可，非常快。

@@ -2,28 +2,8 @@
     "tasks": [
         {
             "type": "cppbuild",
-            "label": "C/C++: gcc.exe 生成活动文件",
-            "command": "F:\\Program Files (x86)\\mingw64\\bin\\gcc.exe",
-            "args": [
-                "-fdiagnostics-color=always",
-                "-g",
-                "${file}",
-                "-o",
-                "${fileDirname}\\${fileBasenameNoExtension}.exe"
-            ],
-            "options": {
-                "cwd": "${fileDirname}"
-            },
-            "problemMatcher": [
-                "$gcc"
-            ],
-            "group": "test",
-            "detail": "调试器生成的任务。"
-        },
-        {
-            "type": "cppbuild",
-            "label": "C/C++: gcc.exe 生成活动文件",
-            "command": "F:\\Program Files (x86)\\mingw64\\bin\\gcc.exe",
+            "label": "C/C++: g++.exe 生成活动文件",
+            "command": "F:\\Program Files (x86)\\mingw64\\bin\\g++.exe",
             "args": [
                 "-fdiagnostics-color=always",
                 "-g",
@@ -38,10 +18,41 @@
                 "$gcc"
             ],
             "group": {
-                "kind": "test",
+                "kind": "build",
                 "isDefault": true
             },
-            "detail": "编译器: F:\\Program Files (x86)\\mingw64\\bin\\gcc.exe"
+            "detail": "调试器生成的任务。"
+        },
+        {
+            "label": "echo",
+            "type": "shell",
+            "command": "echo",
+            "args": [
+                "'",
+                "workspaceFolder",
+                "${workspaceFolder}\n",
+                "workspaceFolderBasename",
+                "${workspaceFolderBasename}\n",
+                "file",
+                "${file}\n",
+                "relativeFile",
+                "${relativeFile}\n",
+                "fileBasename",
+                "${fileBasename}\n",
+                "fileBasenameNoExtension",
+                "${fileBasenameNoExtension}\n",
+                "cwd",
+                "${cwd}\n",
+                "fileDirname",
+                "${fileDirname}\n",
+                "fileExtname",
+                "${fileExtname}\n",
+                "lineNumber",
+                "${lineNumber}\n",
+                
+                "'"
+            ],
+            "problemMatcher": "$gcc"  // 使用gcc问题匹配器
         }
     ],
     "version": "2.0.0"

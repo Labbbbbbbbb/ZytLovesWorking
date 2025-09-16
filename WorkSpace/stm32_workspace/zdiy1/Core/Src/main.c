@@ -27,7 +27,7 @@
 /* USER CODE BEGIN Includes */
 #include "mpu6050.h"
 #include "io_retargetToUart.h"
-//#include <stdio.h>
+#include <stdio.h>
 //#include "usbd_cdc_if.h"
 #include "oled.h"
 /* USER CODE END Includes */
@@ -113,8 +113,10 @@ int main(void)
     MPU_Data_Get();
     // printf("Accel: X=%.2fg, Y=%.2fg, Z=%.2fg\n", imu_data.accel_x, imu_data.accel_y, imu_data.accel_z);
     // printf("Gyro: X=%.2f°/s, Y=%.2f°/s, Z=%.2f°/s\n", imu_data.gyro_x, imu_data.gyro_y, imu_data.gyro_z);
-    // printf("Pitch: %.2f°, Roll: %.2f°, Yaw: %.2f°\n", imu_data.pitch, imu_data.roll, imu_data.yaw);
-    printf("Pitch: %.2f°\n", imu_data.pitch);
+    printf("Pitch: %.2f°, Roll: %.2f°\n", imu_data.pitch, imu_data.roll);
+    // printf("Gyro bias: %ld %ld %ld\n", gyro_bias[0], gyro_bias[1], gyro_bias[2]);
+    // printf("Accel bias: %ld %ld %ld\n", accel_bias[0], accel_bias[1], accel_bias[2]);
+    //printf("Pitch: %.2f°\n", imu_data.pitch);
 
     //printf("%f\n", imu_data.accel_x);
     //printf("hello%d\n", flag);

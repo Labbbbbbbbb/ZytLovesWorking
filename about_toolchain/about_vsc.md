@@ -1,6 +1,10 @@
+### 终端设置
+
 查看默认终端：设置中搜索`terminal.integrated.defaultProfile.window`  ,,null的话默认是POWERSHELL
 
 
+
+### 预设变量
 
 ## [Predefined variables](https://code.visualstudio.com/docs/reference/variables-reference#_predefined-variables)
 
@@ -53,3 +57,21 @@ This leads to the following values for each of the variables:
 - **${selectedText}**: text selected in your code editor
 - **${execPath}**: location of Code.exe
 - **${pathSeparator}**: `/` on macOS or linux, `\` on Windows
+
+
+
+
+
+### Intellisense设置
+
+主要是应对intellisense会在一些路径之类的地方上画波浪线表示找不到该头文件或变量，但是实际上编译是能过的，这说明只是intellisense自己找不到路径
+
+更改intellisense设置：
+
+![image-20250917133739457](assets\image-20250917133739457.png)
+
+根据自己的语言选择intellisense的编译器
+
+![image-20250917133814227](assets\image-20250917133814227.png)
+
+或查看`.vscode\c_cpp_properties.json`的有关配置，因为这里的intellisense其实是C/C++扩展里面的功能，由其相关的json文件配置

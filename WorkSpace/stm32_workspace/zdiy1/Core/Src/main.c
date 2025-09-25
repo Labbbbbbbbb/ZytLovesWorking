@@ -21,6 +21,7 @@
 #include "spi.h"
 #include "tim.h"
 #include "usart.h"
+#include "usb_device.h"
 #include "gpio.h"
 
 /* Private includes ----------------------------------------------------------*/
@@ -28,8 +29,9 @@
 #include "mpu6050.h"
 #include "io_retargetToUart.h"
 #include <stdio.h>
-//#include "usbd_cdc_if.h"
+#include "usbd_cdc_if.h"
 #include "oled.h"
+#include "jy901s.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -99,11 +101,18 @@ int main(void)
   MX_USART3_UART_Init();
   MX_TIM1_Init();
   MX_TIM2_Init();
+  MX_USB_DEVICE_Init();
   /* USER CODE BEGIN 2 */
   MPU_Init();
   SPI_PIN_Init();
   OLED_Init();
-	//uint8_t TX[] = "abc\r\n";
+  JY901S_Init();
+  char *TX = "I Love VCP\n";
+
+  HAL_TIM_Base_Start(&htim2);
+  HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_1);
+  HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_2);
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -111,17 +120,13 @@ int main(void)
   while (1)
   {
     MPU_Data_Get();
-    // printf("Accel: X=%.2fg, Y=%.2fg, Z=%.2fg\n", imu_data.accel_x, imu_data.accel_y, imu_data.accel_z);
-    // printf("Gyro: X=%.2f°/s, Y=%.2f°/s, Z=%.2f°/s\n", imu_data.gyro_x, imu_data.gyro_y, imu_data.gyro_z);
     printf("Pitch: %.2f°, Roll: %.2f°\n", imu_data.pitch, imu_data.roll);
-    // printf("Gyro bias: %ld %ld %ld\n", gyro_bias[0], gyro_bias[1], gyro_bias[2]);
-    // printf("Accel bias: %ld %ld %ld\n", accel_bias[0], accel_bias[1], accel_bias[2]);
-    //printf("Pitch: %.2f°\n", imu_data.pitch);
+    CDC_Transmit_FS(TX, strlen(TX));
 
-    //printf("%f\n", imu_data.accel_x);
-    //printf("hello%d\n", flag);
-    //CDC_Transmit_FS(TX, 5);
+    JY901S_Update();
     HAL_Delay(100);
+    OLED_DisplayTurn(1);
+    OLED_ShowString(0,0,"I Love VCP", 16);
     OLED_Refresh();
     
     OLED_ShowString(0,0,"pitch:", 16);
@@ -130,6 +135,14 @@ int main(void)
     OLED_ShowNum(50,30,(int)imu_data.roll,5, 16);
     
     OLED_Refresh();
+
+    HAL_GPIO_WritePin(L_Turn_GPIO_Port, L_Turn_Pin, GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(R_Turn_GPIO_Port, R_Turn_Pin, GPIO_PIN_SET);
+    __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_1, 200);
+    __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_2, 800);
+    // HAL_GPIO_WritePin(GPIOA, GPIO_PIN_0, GPIO_PIN_RESET);
+    // HAL_GPIO_WritePin(GPIOA, GPIO_PIN_1, GPIO_PIN_SET);
+
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -145,6 +158,7 @@ void SystemClock_Config(void)
 {
   RCC_OscInitTypeDef RCC_OscInitStruct = {0};
   RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
+  RCC_PeriphCLKInitTypeDef PeriphClkInit = {0};
 
   /** Initializes the RCC Oscillators according to the specified parameters
   * in the RCC_OscInitTypeDef structure.
@@ -171,6 +185,12 @@ void SystemClock_Config(void)
   RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
 
   if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_2) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_USB;
+  PeriphClkInit.UsbClockSelection = RCC_USBCLKSOURCE_PLL_DIV1_5;
+  if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK)
   {
     Error_Handler();
   }

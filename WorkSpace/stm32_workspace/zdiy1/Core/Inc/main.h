@@ -57,10 +57,6 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
-#define L_PWM_Pin GPIO_PIN_0
-#define L_PWM_GPIO_Port GPIOA
-#define R_PWM_Pin GPIO_PIN_1
-#define R_PWM_GPIO_Port GPIOA
 #define ASR_PA2_Pin GPIO_PIN_2
 #define ASR_PA2_GPIO_Port GPIOA
 #define ASR_PA2_EXTI_IRQn EXTI2_IRQn

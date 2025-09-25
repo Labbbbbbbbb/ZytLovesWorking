@@ -103,24 +103,26 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-    // HAL_GPIO_WritePin(DIR_GPIO_Port, DIR_Pin, GPIO_PIN_RESET);
-    // for(int i = 0; i < 200; i++) {
-    //     HAL_GPIO_WritePin(STEP_GPIO_Port, STEP_Pin, GPIO_PIN_SET);
-    //     HAL_Delay(1);
-    //     HAL_GPIO_WritePin(STEP_GPIO_Port, STEP_Pin, GPIO_PIN_RESET);
-    //     HAL_Delay(1);
-    // }
+    HAL_GPIO_WritePin(EN_GPIO_Port, EN_Pin, GPIO_PIN_SET);
+
+    HAL_GPIO_WritePin(DIR_GPIO_Port, DIR_Pin, GPIO_PIN_RESET);
+    for(int i = 0; i < 200; i++) {
+        HAL_GPIO_WritePin(STEP_GPIO_Port, STEP_Pin, GPIO_PIN_SET);
+        HAL_Delay(1);
+        HAL_GPIO_WritePin(STEP_GPIO_Port, STEP_Pin, GPIO_PIN_RESET);
+        HAL_Delay(1);
+    }
     //set_speed(&moto1, 1, 1000,0,0);
     // set_location(&moto_8, 0, 1000,50,2000,0,0);
     // HAL_Delay(2000);
     // set_location(&moto_8, 1, 1000,50,2000,0,0);
-    HAL_Delay(2000);
+    //HAL_Delay(2000);
 
     //Emm_V5_Vel_Control(1, 0, 1000, 0, false);
     
-    Emm_V5_Pos_Control(1,0,100,0,2000,1,false);
-    HAL_Delay(2000);
-    Emm_V5_Pos_Control(1,0,100,0,2000,1,false);
+    // Emm_V5_Pos_Control(1,0,100,0,2000,1,false);
+    // HAL_Delay(2000);
+    // Emm_V5_Pos_Control(1,0,100,0,2000,1,false);
     //HAL_GPIO_WritePin(STEP_GPIO_Port, STEP_Pin, GPIO_PIN_RESET);
     /* USER CODE END WHILE */
 

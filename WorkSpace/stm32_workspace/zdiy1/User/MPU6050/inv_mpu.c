@@ -2228,7 +2228,7 @@ int mpu_run_self_test(long *gyro, long *accel)
         result |= 0x01;
     if (!accel_result)
         result |= 0x02;
-    //result = 0x3;
+    result = 0x3;
 #ifdef AK89xx_SECONDARY
     compass_result = compass_self_test();
     if (!compass_result)

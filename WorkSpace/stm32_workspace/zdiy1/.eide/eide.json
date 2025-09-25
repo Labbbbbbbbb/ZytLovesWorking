@@ -5,7 +5,9 @@
   "srcDirs": [
     "Core",
     "Drivers",
-    "User"
+    "User",
+    "Middlewares",
+    "USB_DEVICE"
   ],
   "virtualFolder": {
     "name": "<virtual_root>",

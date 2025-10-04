@@ -28,5 +28,9 @@ __pycache__/
 *.img
 *正点原子*
 /CQ09
-/EC_resources/
+/EC_resources/install
+/EC_resources/brochure
+/EC_resources/Lib
+/EC_resources/往届比赛经验
 /MachineLearning/李宏毅*
+/others

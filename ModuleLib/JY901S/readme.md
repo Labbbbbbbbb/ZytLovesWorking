@@ -19,3 +19,11 @@
 ```
 
  fAcc、fGyro、fAngle是全局变量
+
+在jy901s.h中修改使用的串口
+
+```
+#define HUART huart3
+#define UART_INSTANCE USART3
+```
+

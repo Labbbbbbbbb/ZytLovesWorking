@@ -32,6 +32,7 @@
 #include "usbd_cdc_if.h"
 #include "oled.h"
 #include "jy901s.h"
+#include "wtr_calculate.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -63,8 +64,17 @@ void SystemClock_Config(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-uint8_t flag = 0;
-
+uint8_t tim_elapsed;
+uint8_t left_ICflag;
+uint8_t right_ICflag;
+uint8_t captureEDGE[2];  //0==RISINGEDGE  1=FALLINGEDGE
+int16_t left_cnt;  
+int16_t right_cnt;
+float vel_left;
+float vel_right;
+PID_t left_pid,right_pid;
+PID_t angle_pid;
+float outputright,outputleft;
 /* USER CODE END 0 */
 
 /**
@@ -102,46 +112,175 @@ int main(void)
   MX_TIM1_Init();
   MX_TIM2_Init();
   MX_USB_DEVICE_Init();
+  MX_TIM3_Init();
+  MX_TIM4_Init();
   /* USER CODE BEGIN 2 */
-  MPU_Init();
+  //MPU_Init();
   SPI_PIN_Init();
   OLED_Init();
   JY901S_Init();
   char *TX = "I Love VCP\n";
-
   HAL_TIM_Base_Start(&htim2);
+	HAL_TIM_Base_Start(&htim3);
+	HAL_TIM_Base_Start(&htim4);
+	HAL_TIM_Base_Start_IT(&htim1);
+	HAL_TIM_IC_Start_IT(&htim4,TIM_CHANNEL_3);
+  HAL_TIM_IC_Start_IT(&htim3,TIM_CHANNEL_1);
   HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_1);
   HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_2);
-
+  pid_init(&left_pid, 3, 0, 0.0, 1000, 0);
+  pid_init(&right_pid,3, 0, 0.0, 1000, 0);
+  pid_init(&angle_pid,30, 0, 2, 1000, 0);
+  HAL_TIM_Encoder_Start(&htim3,TIM_CHANNEL_1 | TIM_CHANNEL_2);
+  HAL_TIM_Encoder_Start(&htim4,TIM_CHANNEL_1 | TIM_CHANNEL_2);
+  __HAL_TIM_SetCounter(&htim3,65536/2);
+  __HAL_TIM_SetCounter(&htim4,65536/2);
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-    MPU_Data_Get();
-    printf("Pitch: %.2f°, Roll: %.2f°\n", imu_data.pitch, imu_data.roll);
+    //MPU_Data_Get();
+    //printf("Pitch: %.2f°, Roll: %.2f°\n", imu_data.pitch, imu_data.roll);
     CDC_Transmit_FS(TX, strlen(TX));
 
     JY901S_Update();
-    HAL_Delay(100);
     OLED_DisplayTurn(1);
-    OLED_ShowString(0,0,"I Love VCP", 16);
+    
     OLED_Refresh();
     
     OLED_ShowString(0,0,"pitch:", 16);
-    OLED_ShowString(0,30,"roll:", 16);
-    OLED_ShowNum(50,0,(int)imu_data.pitch,5, 16);
-    OLED_ShowNum(50,30,(int)imu_data.roll,5, 16);
-    
-    OLED_Refresh();
+    OLED_ShowString(0,30,"velocity:", 16);
+    OLED_ShowNum(50,0,(int)left_cnt,5, 16);
+    OLED_ShowNum(50,30,(int)right_cnt,5, 16);
+    //OLED_ShowNum(80,30,(uint8_t)vel_right,3, 16);
 
-    HAL_GPIO_WritePin(L_Turn_GPIO_Port, L_Turn_Pin, GPIO_PIN_RESET);
-    HAL_GPIO_WritePin(R_Turn_GPIO_Port, R_Turn_Pin, GPIO_PIN_SET);
-    __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_1, 200);
-    __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_2, 800);
-    // HAL_GPIO_WritePin(GPIOA, GPIO_PIN_0, GPIO_PIN_RESET);
-    // HAL_GPIO_WritePin(GPIOA, GPIO_PIN_1, GPIO_PIN_SET);
+    OLED_Refresh();
+    // printf(" %d %d\n",left_cnt,right_cnt);
+  
+    angle_pid.ref=0;
+    angle_pid.fdb=fAngle[0];
+    PID_Calc(&angle_pid);
+   if(fAngle[0]>-5&&fAngle[0]<5)  //dead band
+   {
+       angle_pid.output=0;
+   }
+
+   
+  //  if(outputleft>0)
+  //     {
+  //       HAL_GPIO_WritePin(L_Turn_GPIO_Port, L_Turn_Pin, GPIO_PIN_RESET);
+  //       __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_1, outputleft);
+  //     }else
+  //     {
+  //       HAL_GPIO_WritePin(L_Turn_GPIO_Port, L_Turn_Pin, GPIO_PIN_SET);
+  //       __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_1, 1000+outputleft);
+  //     }
+  //     if(outputright>0)
+  //     {
+  //       HAL_GPIO_WritePin(R_Turn_GPIO_Port, R_Turn_Pin, GPIO_PIN_RESET);
+  //       __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_2, outputright);
+  //     }else
+  //     {
+  //       HAL_GPIO_WritePin(R_Turn_GPIO_Port, R_Turn_Pin, GPIO_PIN_SET);
+  //       __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_2, 1000+outputright);
+  //     }
+
+      printf("lcnt:%f,rcnt:%f,angle_pid:%.2f,left_pid:%.2f,right_pid:%.2f\n",vel_left,vel_right,angle_pid.output,left_pid.output,right_pid.output);
+  //  if(angle_pid.output>0)
+  //  {
+  //      HAL_GPIO_WritePin(L_Turn_GPIO_Port, L_Turn_Pin, GPIO_PIN_RESET);
+  //      __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_1, angle_pid.output);
+  //      HAL_GPIO_WritePin(R_Turn_GPIO_Port, R_Turn_Pin, GPIO_PIN_RESET);
+  //      __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_2, angle_pid.output);
+  //  }else
+  //  {
+  //       HAL_GPIO_WritePin(L_Turn_GPIO_Port, L_Turn_Pin, GPIO_PIN_SET);
+  //       __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_1, 1000+angle_pid.output);
+  //       HAL_GPIO_WritePin(R_Turn_GPIO_Port, R_Turn_Pin, GPIO_PIN_SET);
+  //       __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_2, 1000+angle_pid.output);
+  //  }
+    /***********IC_CAPTURE_COUNT************/
+    
+// if(left_ICflag)
+// 	   {
+// 			 if(captureEDGE[0])   //DOUBLE FREQUENCY TEST
+// 			 {
+// 				 __HAL_TIM_SET_CAPTUREPOLARITY(&htim3, TIM_CHANNEL_1, TIM_INPUTCHANNELPOLARITY_FALLING); //?is it necessary?
+// 				 captureEDGE[0]--;
+// 			 }
+// 			 else
+// 			 {
+// 				 __HAL_TIM_SET_CAPTUREPOLARITY(&htim3, TIM_CHANNEL_1, TIM_INPUTCHANNELPOLARITY_RISING);
+// 				 captureEDGE[0]++;
+// 			 }
+// 		   left_cnt++;
+// 		   HAL_TIM_IC_Start_IT(&htim3,TIM_CHANNEL_1);
+// 			left_ICflag=0;
+// 	   }
+// 		  if(right_ICflag)
+// 	   {
+// 	    	if(captureEDGE[1])   //DOUBLE FREQUENCY TEST
+// 			 {
+// 				 __HAL_TIM_SET_CAPTUREPOLARITY(&htim4, TIM_CHANNEL_3, TIM_INPUTCHANNELPOLARITY_FALLING); //?is it necessary?
+// 				 captureEDGE[1]--;
+// 			 }
+// 			 else
+// 			 {
+// 				 __HAL_TIM_SET_CAPTUREPOLARITY(&htim4, TIM_CHANNEL_3, TIM_INPUTCHANNELPOLARITY_RISING);
+// 				 captureEDGE[1]++;
+// 			 }
+// 		   right_cnt++;
+// 		   HAL_TIM_IC_Start_IT(&htim4,TIM_CHANNEL_3);
+// 			right_ICflag=0;
+// 	   }
+    /***********IC_CAPTURE_COUNT************/
+    /***********VELOCITY_CALCULATE&PID_CONTROL************/
+    if(tim_elapsed)
+    {
+      left_cnt=__HAL_TIM_GET_COUNTER(&htim3)-65536/2;
+      right_cnt=__HAL_TIM_GET_COUNTER(&htim4)-65536/2;
+      vel_left=left_cnt;  //rpm/28.0)*60.0*100
+      vel_right=right_cnt; //rpm/28.0)*60.0*100
+
+      left_cnt=0;
+      right_cnt=0;
+      //printf("vel_left:%.2f,vel_right:%.2f,%f,%f\n",vel_left,vel_right,left_pid.output,right_pid.output);
+      /***********PID_CONTROL************/
+      left_pid.ref=angle_pid.output;
+      right_pid.ref=angle_pid.output;
+      left_pid.fdb=vel_left;
+      right_pid.fdb=vel_right;
+      PID_Calc(&left_pid);
+      PID_Calc(&right_pid);
+      if(left_pid.output>0)
+      {
+        HAL_GPIO_WritePin(L_Turn_GPIO_Port, L_Turn_Pin, GPIO_PIN_RESET);
+        __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_1, left_pid.output);
+      }else
+      {
+        HAL_GPIO_WritePin(L_Turn_GPIO_Port, L_Turn_Pin, GPIO_PIN_SET);
+        __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_1, 1000+left_pid.output);
+      }
+      if(right_pid.output>0)
+      {
+        HAL_GPIO_WritePin(R_Turn_GPIO_Port, R_Turn_Pin, GPIO_PIN_RESET);
+        __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_2, right_pid.output);
+      }else
+      {
+        HAL_GPIO_WritePin(R_Turn_GPIO_Port, R_Turn_Pin, GPIO_PIN_SET);
+        __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_2, 1000+right_pid.output);
+      }
+
+      __HAL_TIM_SetCounter(&htim3,65536/2);
+      __HAL_TIM_SetCounter(&htim4,65536/2);
+		   tim_elapsed=0;
+
+      /***********PID_CONTROL************/
+    }
+    
+    /***********VELOCITY_CALCULATE&PID_CONTROL************/
 
     /* USER CODE END WHILE */
 
@@ -197,36 +336,25 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
-void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
-    if (GPIO_Pin == ASR_PA0_Pin) // ????????????
-    {
-        flag = 1;
-    }
-    if (GPIO_Pin == ASR_PA1_Pin) // ????????????
-    {
-        flag = 2;
-    }
-    if (GPIO_Pin == ASR_PA2_Pin) // ????????????
-    {
-        flag = 3;
-    }
-    if (GPIO_Pin == ASR_PA3_Pin) // ????????????
-    {
-        flag = 4;
-    }
-    if (GPIO_Pin == SW1_Pin) // ????????????
-    {
-        flag = 5;
-    }
-    if (GPIO_Pin == SW2_Pin) // ????????????
-    {
-        flag = 6;
-    }
-    if (GPIO_Pin == SW3_Pin) // ????????????
-    {
-        flag = 7;
-    }
+  if(htim->Instance == TIM1)
+  {
+    tim_elapsed = 1;
+  }
+}
+void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)  //inputcapture:collect the data of the difference of time
+{
+	// if(htim->Instance==TIM3&&htim->Channel==HAL_TIM_ACTIVE_CHANNEL_1)
+	// {
+	// 	left_ICflag=1;
+	// }
+	// if(htim->Instance==TIM4&&htim->Channel==HAL_TIM_ACTIVE_CHANNEL_3)
+	// {
+	// 	right_ICflag=1;
+	// }
+	
+
 }
 /* USER CODE END 4 */
 

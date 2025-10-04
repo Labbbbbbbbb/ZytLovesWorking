@@ -105,7 +105,7 @@ void JY901S_Update(void)
 			if(s_cDataUpdate & ANGLE_UPDATE)
 			{
                 fYaw = (float)((unsigned short)sReg[Yaw]) / 32768 * 180.0;
-				printf("angle:%.3f %.3f %.3f(%.3f)\r\n", fAngle[0], fAngle[1], fAngle[2], fYaw);
+				//printf("angle:%.3f %.3f %.3f(%.3f)\r\n", fAngle[0], fAngle[1], fAngle[2], fYaw);
 				s_cDataUpdate &= ~ANGLE_UPDATE;
 			}
 			if(s_cDataUpdate & MAG_UPDATE)

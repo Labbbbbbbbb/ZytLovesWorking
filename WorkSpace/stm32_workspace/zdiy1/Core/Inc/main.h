@@ -92,15 +92,6 @@ void Error_Handler(void);
 #define ASR_PA3_EXTI_IRQn EXTI3_IRQn
 #define Encoder_LA_Pin GPIO_PIN_4
 #define Encoder_LA_GPIO_Port GPIOB
-#define Encoder_LB_Pin GPIO_PIN_5
-#define Encoder_LB_GPIO_Port GPIOB
-#define IIC_SCL_Pin GPIO_PIN_6
-#define IIC_SCL_GPIO_Port GPIOB
-#define IIC_SDA_Pin GPIO_PIN_7
-#define IIC_SDA_GPIO_Port GPIOB
-#define Encoder_RA_Pin GPIO_PIN_8
-#define Encoder_RA_GPIO_Port GPIOB
-#define Encoder_RA_EXTI_IRQn EXTI9_5_IRQn
 #define Encoder_RB_Pin GPIO_PIN_9
 #define Encoder_RB_GPIO_Port GPIOB
 

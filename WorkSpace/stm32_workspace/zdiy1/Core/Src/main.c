@@ -201,41 +201,7 @@ int main(void)
   //       HAL_GPIO_WritePin(R_Turn_GPIO_Port, R_Turn_Pin, GPIO_PIN_SET);
   //       __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_2, 1000+angle_pid.output);
   //  }
-    /***********IC_CAPTURE_COUNT************/
-    
-// if(left_ICflag)
-// 	   {
-// 			 if(captureEDGE[0])   //DOUBLE FREQUENCY TEST
-// 			 {
-// 				 __HAL_TIM_SET_CAPTUREPOLARITY(&htim3, TIM_CHANNEL_1, TIM_INPUTCHANNELPOLARITY_FALLING); //?is it necessary?
-// 				 captureEDGE[0]--;
-// 			 }
-// 			 else
-// 			 {
-// 				 __HAL_TIM_SET_CAPTUREPOLARITY(&htim3, TIM_CHANNEL_1, TIM_INPUTCHANNELPOLARITY_RISING);
-// 				 captureEDGE[0]++;
-// 			 }
-// 		   left_cnt++;
-// 		   HAL_TIM_IC_Start_IT(&htim3,TIM_CHANNEL_1);
-// 			left_ICflag=0;
-// 	   }
-// 		  if(right_ICflag)
-// 	   {
-// 	    	if(captureEDGE[1])   //DOUBLE FREQUENCY TEST
-// 			 {
-// 				 __HAL_TIM_SET_CAPTUREPOLARITY(&htim4, TIM_CHANNEL_3, TIM_INPUTCHANNELPOLARITY_FALLING); //?is it necessary?
-// 				 captureEDGE[1]--;
-// 			 }
-// 			 else
-// 			 {
-// 				 __HAL_TIM_SET_CAPTUREPOLARITY(&htim4, TIM_CHANNEL_3, TIM_INPUTCHANNELPOLARITY_RISING);
-// 				 captureEDGE[1]++;
-// 			 }
-// 		   right_cnt++;
-// 		   HAL_TIM_IC_Start_IT(&htim4,TIM_CHANNEL_3);
-// 			right_ICflag=0;
-// 	   }
-    /***********IC_CAPTURE_COUNT************/
+
     /***********VELOCITY_CALCULATE&PID_CONTROL************/
     if(tim_elapsed)
     {

@@ -74,6 +74,7 @@ float vel_left;
 float vel_right;
 PID_t left_pid,right_pid;
 PID_t angle_pid;
+PID_t gyro_pid;
 float outputright,outputleft;
 /* USER CODE END 0 */
 
@@ -128,9 +129,10 @@ int main(void)
   HAL_TIM_IC_Start_IT(&htim3,TIM_CHANNEL_1);
   HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_1);
   HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_2);
-  pid_init(&left_pid, 3, 0, 0.0, 1000, 0);
-  pid_init(&right_pid,3, 0, 0.0, 1000, 0);
-  pid_init(&angle_pid,30, 0, 2, 1000, 0);
+  pid_init(&left_pid, 3, 0.1, 0.02, 1000, 0,200);
+  pid_init(&right_pid,3, 0.1, 0.02, 1000, 0,200);
+  pid_init(&angle_pid,5, 0, 0.2, 80, 0,10);
+  pid_init(&gyro_pid,3, 0, 0, 300, 0,20);
   HAL_TIM_Encoder_Start(&htim3,TIM_CHANNEL_1 | TIM_CHANNEL_2);
   HAL_TIM_Encoder_Start(&htim4,TIM_CHANNEL_1 | TIM_CHANNEL_2);
   __HAL_TIM_SetCounter(&htim3,65536/2);
@@ -143,64 +145,33 @@ int main(void)
   {
     //MPU_Data_Get();
     //printf("Pitch: %.2f°, Roll: %.2f°\n", imu_data.pitch, imu_data.roll);
-    CDC_Transmit_FS(TX, strlen(TX));
+    //CDC_Transmit_FS(TX, strlen(TX));
 
     JY901S_Update();
-    OLED_DisplayTurn(1);
+    // OLED_DisplayTurn(1);
+    // OLED_Refresh();
     
-    OLED_Refresh();
-    
-    OLED_ShowString(0,0,"pitch:", 16);
-    OLED_ShowString(0,30,"velocity:", 16);
-    OLED_ShowNum(50,0,(int)left_cnt,5, 16);
-    OLED_ShowNum(50,30,(int)right_cnt,5, 16);
-    //OLED_ShowNum(80,30,(uint8_t)vel_right,3, 16);
+    // OLED_ShowString(0,0,"pitch:", 16);
+    // OLED_ShowString(0,30,"velocity:", 16);
+    // OLED_ShowNum(50,0,(int)left_cnt,5, 16);
+    // OLED_ShowNum(50,30,(int)right_cnt,5, 16);
 
-    OLED_Refresh();
+    // OLED_Refresh();
     // printf(" %d %d\n",left_cnt,right_cnt);
-  
+    /***********ANGLE&GYRO_PID_CONTROL************/
     angle_pid.ref=0;
     angle_pid.fdb=fAngle[0];
-    PID_Calc(&angle_pid);
-   if(fAngle[0]>-5&&fAngle[0]<5)  //dead band
+    PID_Calc_P(&angle_pid);
+   if(fAngle[0]>-4&&fAngle[0]<4)  //dead band
    {
        angle_pid.output=0;
    }
-
-   
-  //  if(outputleft>0)
-  //     {
-  //       HAL_GPIO_WritePin(L_Turn_GPIO_Port, L_Turn_Pin, GPIO_PIN_RESET);
-  //       __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_1, outputleft);
-  //     }else
-  //     {
-  //       HAL_GPIO_WritePin(L_Turn_GPIO_Port, L_Turn_Pin, GPIO_PIN_SET);
-  //       __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_1, 1000+outputleft);
-  //     }
-  //     if(outputright>0)
-  //     {
-  //       HAL_GPIO_WritePin(R_Turn_GPIO_Port, R_Turn_Pin, GPIO_PIN_RESET);
-  //       __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_2, outputright);
-  //     }else
-  //     {
-  //       HAL_GPIO_WritePin(R_Turn_GPIO_Port, R_Turn_Pin, GPIO_PIN_SET);
-  //       __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_2, 1000+outputright);
-  //     }
-
-      printf("lcnt:%f,rcnt:%f,angle_pid:%.2f,left_pid:%.2f,right_pid:%.2f\n",vel_left,vel_right,angle_pid.output,left_pid.output,right_pid.output);
-  //  if(angle_pid.output>0)
-  //  {
-  //      HAL_GPIO_WritePin(L_Turn_GPIO_Port, L_Turn_Pin, GPIO_PIN_RESET);
-  //      __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_1, angle_pid.output);
-  //      HAL_GPIO_WritePin(R_Turn_GPIO_Port, R_Turn_Pin, GPIO_PIN_RESET);
-  //      __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_2, angle_pid.output);
-  //  }else
-  //  {
-  //       HAL_GPIO_WritePin(L_Turn_GPIO_Port, L_Turn_Pin, GPIO_PIN_SET);
-  //       __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_1, 1000+angle_pid.output);
-  //       HAL_GPIO_WritePin(R_Turn_GPIO_Port, R_Turn_Pin, GPIO_PIN_SET);
-  //       __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_2, 1000+angle_pid.output);
-  //  }
+   gyro_pid.ref=angle_pid.output;
+   gyro_pid.fdb=fGyro[0];
+   PID_Calc_P(&gyro_pid);
+      printf("angle:%.2f,gyro:%.2f\n",fAngle[0],fGyro[0]);
+      printf("lcnt:%f,rcnt:%f,angle_pid:%.2f,gyro_pid:%.2f,left_pid:%.2f,right_pid:%.2f\n",vel_left,vel_right,angle_pid.output,gyro_pid.output,left_pid.output,right_pid.output);
+//printf("angle:%.2f,gyro:%.2f,left:%.2f,right:%.2f\n",fAngle[0],fGyro[0],left_pid.output,right_pid.output);
 
     /***********VELOCITY_CALCULATE&PID_CONTROL************/
     if(tim_elapsed)
@@ -214,12 +185,12 @@ int main(void)
       right_cnt=0;
       //printf("vel_left:%.2f,vel_right:%.2f,%f,%f\n",vel_left,vel_right,left_pid.output,right_pid.output);
       /***********PID_CONTROL************/
-      left_pid.ref=angle_pid.output;
-      right_pid.ref=angle_pid.output;
+      left_pid.ref=gyro_pid.output;
+      right_pid.ref=gyro_pid.output;
       left_pid.fdb=vel_left;
       right_pid.fdb=vel_right;
-      PID_Calc(&left_pid);
-      PID_Calc(&right_pid);
+      PID_Calc_P(&left_pid);
+      PID_Calc_P(&right_pid);
       if(left_pid.output>0)
       {
         HAL_GPIO_WritePin(L_Turn_GPIO_Port, L_Turn_Pin, GPIO_PIN_RESET);

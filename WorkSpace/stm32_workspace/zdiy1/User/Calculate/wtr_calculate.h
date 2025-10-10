@@ -31,6 +31,7 @@ typedef struct {
     float outputMin; // 最小输出值的绝对值用于防抖
 
     float integral;//add by zyt
+    float integralMax;
 } PID_t;
 // 定义数组，分别存放四个轮子对应电机的速度
 extern double moter_speed[4];
@@ -54,4 +55,4 @@ void DeadBand(double x, double y, double *new_x, double *new_y, double threshoul
 void DeadBandOneDimensional(double x, double *new_x, double threshould);
 
 void PID_Calc_P(__IO PID_t *pid);
-void pid_init(__IO PID_t *pid, float kp, float ki, float kd, float outputMax, float outputMin);
+void pid_init(__IO PID_t *pid, float kp, float ki, float kd, float outputMax, float outputMin,float integralMax);

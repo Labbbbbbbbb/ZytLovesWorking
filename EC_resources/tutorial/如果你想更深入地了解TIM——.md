@@ -23,7 +23,7 @@ RCC（Reset and Clock Control）模块是用于控制STM32的时钟和复位系�
 > STM32本身十分复杂，外设非常多  但我们实际使用的时候只会用到有限的几个外设，使用任何外设都需要时钟才能启动，但并不是所有的外设都需要系统时钟那么高的频率，为了兼容不同速度的设备，有些高速，有些低速，如果都用高速时钟，势必造成浪费   并且，同一个电路，时钟越快功耗越快，同时抗电磁干扰能力也就越弱，所以较为复杂的MCU都是采用多时钟源的方法来解决这些问题。所以便有了STM32的时钟系统和时钟树
 > 原文链接：https://blog.csdn.net/as480133937/article/details/98845509
 
-![image-20241001013607813](C:\Users\zyt\AppData\Roaming\Typora\typora-user-images\image-20241001013607813.png)
+![image-20251009165810081](F:\ITS_Log\EC_resources\tutorial\assets\image-20251009165810081.png)
 
 > STM32 有4个独立时钟源:HSI、HSE、LSI、LSE。
 > ①、HSI是高速内部时钟，RC振荡器，频率为8MHz，精度不高。
@@ -39,7 +39,7 @@ RCC（Reset and Clock Control）模块是用于控制STM32的时钟和复位系�
 
 虽然HSI和HSE频率可能相同，但我们我们通常选择外部晶振，因为外部晶振一般为石英晶体，振荡频率更为稳定
 
-![image-20241001005858575](C:\Users\zyt\AppData\Roaming\Typora\typora-user-images\image-20241001005858575.png)
+![image-20251009165901508](F:\ITS_Log\EC_resources\tutorial\assets\image-20251009165901508.png)
 
 
 
@@ -49,7 +49,7 @@ RCC（Reset and Clock Control）模块是用于控制STM32的时钟和复位系�
 
 ​		   2.选好如图几个选项 （此步也可以直接拉中HCLK，将其数值改为max的数值，即直接拉到最大，其他设置都会相应地自动调整）
 
-![image-20241001000105088](C:\Users\zyt\AppData\Roaming\Typora\typora-user-images\image-20241001000105088.png)
+![image-20251009165932820](C:\Users\zyt\AppData\Roaming\Typora\typora-user-images\image-20251009165932820.png)
 
 备注：其中这个HSE的`Input frequency`是需要我们去查询板子上的外部晶振频率的，我们手上这块最小系统板频率为8MHz
 
@@ -63,11 +63,11 @@ RCC（Reset and Clock Control）模块是用于控制STM32的时钟和复位系�
 
 ### 了解stm32的定时器资源
 
-![image-20241001015551006](C:\Users\zyt\AppData\Roaming\Typora\typora-user-images\image-20241001015551006.png)
+![image-20251009170126291](F:\ITS_Log\EC_resources\tutorial\assets\image-20251009170126291.png)
 
 `stm32f103c8t6`有一个`RTC`(实时计数器，可在掉电后继续计时)和四个`TIM`外设，其中TIM1是高级定时器，TIM2，3，4是通用定时器（除此之外还有系统嘀嗒定时器和看门狗定时器，感兴趣可以自行了解），我们的主要目的是了解TIM1234。
 
-![image-20241001020900372](C:\Users\zyt\AppData\Roaming\Typora\typora-user-images\image-20241001020900372.png)
+![image-20251009170200732](F:\ITS_Log\EC_resources\tutorial\assets\image-20251009170200732.png)
 
 功能比较：高级定时器>通用定时器>基本定时器，下面我们将由简单到复杂认识这个外设
 
@@ -79,7 +79,7 @@ RCC（Reset and Clock Control）模块是用于控制STM32的时钟和复位系�
 
 利用时基单元的计数，我们可以就可以手搓定时器啦。（大家可以先想一想怎么实现）
 
-![image-20241001172216819](C:\Users\zyt\AppData\Roaming\Typora\typora-user-images\image-20241001172216819.png)
+![image-20251009170236866](F:\ITS_Log\EC_resources\tutorial\assets\image-20251009170236866.png)
 
 各频率计算如上图 （这些公式很重要！！！！）
 
@@ -97,9 +97,9 @@ RCC（Reset and Clock Control）模块是用于控制STM32的时钟和复位系�
 
 谈到通用甚至高级定时器，则在时基单元的基础上外加了许多复杂的结构------>((**注意框图看不懂没有关系** （因为我也看不懂） 只是想让大家知道有这么一个东西存在))
 
-![image-20241001145606924](C:\Users\zyt\AppData\Roaming\Typora\typora-user-images\image-20241001145606924.png)
+![image-20251009170304681](F:\ITS_Log\EC_resources\tutorial\assets\image-20251009170304681.png)
 
-![image-20240930232238948](C:\Users\zyt\AppData\Roaming\Typora\typora-user-images\image-20240930232238948.png)
+![image-20251009170339896](F:\ITS_Log\EC_resources\tutorial\assets\image-20251009170339896.png)
 
 可以发现高级定时器其实只比通用定时器多了最下方的一个BKIN（互补输出 刹车输入功能）(目前基本用不到，不重要) 所以就把它们的结构放在一起介绍啦
 
@@ -107,7 +107,7 @@ RCC（Reset and Clock Control）模块是用于控制STM32的时钟和复位系�
 
 ##### 高级控制定时器的四个时钟源
 
-![image-20241001162531490](C:\Users\zyt\AppData\Roaming\Typora\typora-user-images\image-20241001162531490.png)
+![image-20251009170355377](F:\ITS_Log\EC_resources\tutorial\assets\image-20251009170355377.png)
 
 参考[32. TIM—高级定时器 — 野火\]STM32库开发实战指南——基于野火MINI开发板 文档 (embedfire.com)](https://doc.embedfire.com/mcu/stm32/f103mini/std/zh/latest/book/TIM_senior.html#:~:text=可以通过TIMx_C)
 
@@ -161,15 +161,15 @@ TIMx的每个CHANNEL都对应了一个到两个引脚，每个通道可选择的
 
 下面是计算**定时时长的计算方法**。
 
-![image-20241001171432396](C:\Users\zyt\AppData\Roaming\Typora\typora-user-images\image-20241001171432396.png)
+![image-20251009170423313](F:\ITS_Log\EC_resources\tutorial\assets\image-20251009170423313.png)
 
 时基的计时原理还是一样的，由图可知TIMx_CLK频率为72MHz（在时钟树可以看到，c8t6是这个数，换其他板子的时候就不一定了)。配置PSC的数值和ARR的数值，CNT的周期为`T(TIMx_CLK)*(PSC+1)`，（以向上计数为例)只要CNT吭哧吭哧跑到`ARR+1`，定时器就会溢出，**(在已经使能的情况下)**就会触发中断啦
 
 所以最最最重要的就是这个公式：
 
-中断频率：![image-20241001180908219](C:\Users\zyt\AppData\Roaming\Typora\typora-user-images\image-20241001180908219.png)
+中断频率：![image-20251009170439546](F:\ITS_Log\EC_resources\tutorial\assets\image-20251009170439546.png)
 
-每隔时长![image-20241001181025832](C:\Users\zyt\AppData\Roaming\Typora\typora-user-images\image-20241001181025832.png)就会触发一次定时中断。
+每隔时长![image-20251009170503740](F:\ITS_Log\EC_resources\tutorial\assets\image-20251009170503740.png)就会触发一次定时中断。
 
 
 
@@ -199,7 +199,7 @@ TIMx的每个CHANNEL都对应了一个到两个引脚，每个通道可选择的
 
 
 
-![image-20241001215639589](C:\Users\zyt\AppData\Roaming\Typora\typora-user-images\image-20241001215639589.png)
+![image-20251009170827699](F:\ITS_Log\EC_resources\tutorial\assets\image-20251009170827699.png)
 
 #### Pro1 ---- 使用定时器及其中断
 
@@ -207,11 +207,11 @@ TIMx的每个CHANNEL都对应了一个到两个引脚，每个通道可选择的
 
 其他的默认就好，不用配置
 
-![image-20241001220455312](C:\Users\zyt\AppData\Roaming\Typora\typora-user-images\image-20241001220455312.png)
+![image-20251009170850149](F:\ITS_Log\EC_resources\tutorial\assets\image-20251009170850149.png)
 
 如果要使用更新中断，务必在NVIC这里把Update interrupt的使能勾上！
 
-![image-20241001221224305](C:\Users\zyt\AppData\Roaming\Typora\typora-user-images\image-20241001221224305.png)
+![image-20251009170905035](F:\ITS_Log\EC_resources\tutorial\assets\image-20251009170905035.png)
 
 其他的必要配置同GPIO所写教程（包括RCC，SYS，时钟树配置)
 
@@ -267,7 +267,7 @@ HAL_StatusTypeDef HAL_TIM_Base_Stop_IT(TIM_HandleTypeDef *htim);
 
 使用示例：
 
-![image-20241001222254680](C:\Users\zyt\AppData\Roaming\Typora\typora-user-images\image-20241001222254680.png)
+![image-20251009170934910](F:\ITS_Log\EC_resources\tutorial\assets\image-20251009170934910.png)
 
 已知HAL_Delay()最低为ms级别，那么如果我需要一个us级别的定时器------->
 
@@ -306,11 +306,11 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 
 开启时基需要使用这一句，这样才能使能中断
 
-![image-20241001224649538](C:\Users\zyt\AppData\Roaming\Typora\typora-user-images\image-20241001224649538.png)
+![image-20251009170956512](F:\ITS_Log\EC_resources\tutorial\assets\image-20251009170956512.png)
 
 中断回调函数的复写仍然写在4中，编写自己所需要的回调函数即可
 
-![image-20241001224829893](C:\Users\zyt\AppData\Roaming\Typora\typora-user-images\image-20241001224829893.png)
+![image-20251009171010561](F:\ITS_Log\EC_resources\tutorial\assets\image-20251009171010561.png)
 
 #### Pro2 ----pwm
 
@@ -326,17 +326,17 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 >
 > 原文链接：https://blog.csdn.net/weixin_47042449/article/details/122619370
 
-![image-20241001225957196](C:\Users\zyt\AppData\Roaming\Typora\typora-user-images\image-20241001225957196.png)
+![image-20251009171032808](F:\ITS_Log\EC_resources\tutorial\assets\image-20251009171032808.png)
 
 可以看到对应的引脚已经自动配置好了
 
-![image-20241001225218766](C:\Users\zyt\AppData\Roaming\Typora\typora-user-images\image-20241001225218766.png)
+![image-20251009171047151](F:\ITS_Log\EC_resources\tutorial\assets\image-20251009171047151.png)
 
 ARR与PSC的配置与计算也是一个道理，如图，pwm的频率即为1000Hz，此时当CCR==500时占空比为50%（ccr不在这里配，只能用代码改）
 
-![image-20241001230204426](C:\Users\zyt\AppData\Roaming\Typora\typora-user-images\image-20241001230204426.png)
+![image-20251009171449957](F:\ITS_Log\EC_resources\tutorial\assets\image-20251009171449957.png)
 
-![image-20241001230544971](C:\Users\zyt\AppData\Roaming\Typora\typora-user-images\image-20241001230544971.png)
+![image-20251009171459078](F:\ITS_Log\EC_resources\tutorial\assets\image-20251009171459078.png)
 
 常用函数：
 
@@ -370,11 +370,11 @@ __HAL_TIM_SET_COMPARE(__HANDLE__, __CHANNEL__, __COMPARE__);
 
 *注意`HAL_TIM_Base_Start`仍然要写噢，因为pwm还是需要时基的
 
-![image-20241001232043073](C:\Users\zyt\AppData\Roaming\Typora\typora-user-images\image-20241001232043073.png)
+![image-20251009171521954](F:\ITS_Log\EC_resources\tutorial\assets\image-20251009171521954.png)
 
 设置一下ccr就可以获得任意占空比的方波信号啦~~
 
-![image-20241001232238558](C:\Users\zyt\AppData\Roaming\Typora\typora-user-images\image-20241001232238558.png)
+![image-20251009171534522](F:\ITS_Log\EC_resources\tutorial\assets\image-20251009171534522.png)
 
 那么请大家思考一下呼吸灯如何用pwm波实现叭
 
@@ -382,7 +382,7 @@ __HAL_TIM_SET_COMPARE(__HANDLE__, __CHANNEL__, __COMPARE__);
 
 ------->
 
-![image-20241007140929936](C:\Users\zyt\AppData\Roaming\Typora\typora-user-images\image-20241007140929936.png)
+![image-20251009171625642](F:\ITS_Log\EC_resources\tutorial\assets\image-20251009171625642.png)
 
 - 易错点提醒
 - 如果发现led长亮，可能是延迟的问题噢，因为就算是cnt从0自增到100，中间的时间间隔也非常非常短，会让人眼产生这是长亮的错觉

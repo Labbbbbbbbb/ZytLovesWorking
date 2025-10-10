@@ -16,13 +16,15 @@
 #define rotate_ratio    0.3615   // (Width + Length)/2
 #define wheel_rpm_ratio 2387.324 // 换算线速度到rpm
 
-void pid_init(__IO PID_t *pid, float kp, float ki, float kd, float outputMax, float outputMin)
+void pid_init(__IO PID_t *pid, float kp, float ki, float kd, float outputMax, float outputMin,float integralMax)
 {
     pid->KP        = kp;
     pid->KI        = ki;
     pid->KD        = kd;
     pid->outputMax = outputMax;
     pid->outputMin = outputMin;
+    pid->integralMax   = integralMax;
+
 
     pid->fdb        = 0;
     pid->ref        = 0;
@@ -81,6 +83,8 @@ void PID_Calc_P(__IO PID_t *pid)
 {
     pid->cur_error = pid->ref - pid->fdb;
     pid->integral += pid->cur_error;
+    if (pid->integral > pid->integralMax) pid->integral = pid->integralMax;
+    if (pid->integral < -pid->integralMax) pid->integral = -pid->integralMax;
     pid->output = pid->KP * pid->cur_error + pid->KI * pid->integral + pid->KD * (pid->cur_error - pid->error[1]);
     pid->error[0] = pid->error[1];  //这句已经没有用了
     pid->error[1] = pid->ref - pid->fdb;

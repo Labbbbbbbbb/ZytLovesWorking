@@ -27,7 +27,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "mpu6050.h"
-#include "io_retargetToUart.h"
+//#include "io_retargetToUart.h"
 #include <stdio.h>
 #include "usbd_cdc_if.h"
 #include "oled.h"
@@ -59,6 +59,42 @@
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 /* USER CODE BEGIN PFP */
+
+//??????,??printf??,??????use MicroLIB	  
+// #if 1
+// #pragma import(__use_no_semihosting)             
+// //??????????                 
+// struct __FILE 
+// { 
+// 	int handle; 
+ 
+// }; 
+ 
+// FILE __stdout;       
+// //??_sys_exit()??????????   
+ 
+// void _sys_exit(int x) 
+// { 
+// 	x = x; 
+// } 
+// //???fputc??
+// int fputc(int ch, FILE *f) {
+// HAL_UART_Transmit(&huart1, (uint8_t *)&ch, 1, 0xffff);
+// return ch;
+// }
+
+// #endif 
+#ifdef __GNUC__
+#define PUTCHAR_PROTOTYPE int __io_putchar(int ch)
+#else
+#define PUTCHAR_PROTOTYPE int fputc(int ch, FILE *f)
+#endif
+
+PUTCHAR_PROTOTYPE
+{
+    HAL_UART_Transmit(&huart1, (uint8_t *)&ch, 1, 100);
+    return ch;
+}
 
 /* USER CODE END PFP */
 
@@ -129,10 +165,10 @@ int main(void)
   HAL_TIM_IC_Start_IT(&htim3,TIM_CHANNEL_1);
   HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_1);
   HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_2);
-  pid_init(&left_pid, 3, 0.1, 0.02, 1000, 0,200);
-  pid_init(&right_pid,3, 0.1, 0.02, 1000, 0,200);
-  pid_init(&angle_pid,5, 0, 0.2, 80, 0,10);
-  pid_init(&gyro_pid,3, 0, 0, 300, 0,20);
+  pid_init(&left_pid, 40, 4, 0.5, 1000, 0,200);
+  pid_init(&right_pid,40, 4, 0.5, 1000, 0,200);
+  pid_init(&angle_pid,8, 0, 0.2, 160, 0,20);
+  pid_init(&gyro_pid,0.3, 0.2, 0.0, 25, 0,8);
   HAL_TIM_Encoder_Start(&htim3,TIM_CHANNEL_1 | TIM_CHANNEL_2);
   HAL_TIM_Encoder_Start(&htim4,TIM_CHANNEL_1 | TIM_CHANNEL_2);
   __HAL_TIM_SetCounter(&htim3,65536/2);
@@ -169,9 +205,15 @@ int main(void)
    gyro_pid.ref=angle_pid.output;
    gyro_pid.fdb=fGyro[0];
    PID_Calc_P(&gyro_pid);
-      printf("angle:%.2f,gyro:%.2f\n",fAngle[0],fGyro[0]);
-      printf("lcnt:%f,rcnt:%f,angle_pid:%.2f,gyro_pid:%.2f,left_pid:%.2f,right_pid:%.2f\n",vel_left,vel_right,angle_pid.output,gyro_pid.output,left_pid.output,right_pid.output);
-//printf("angle:%.2f,gyro:%.2f,left:%.2f,right:%.2f\n",fAngle[0],fGyro[0],left_pid.output,right_pid.output);
+   // printf("angle:%.2f,gyro:%.2f\n",fAngle[0],fGyro[0]);
+   // printf("lcnt:%f,rcnt:%f,angle_pid:%.2f,gyro_pid:%.2f,left_pid:%.2f,right_pid:%.2f\n",vel_left,vel_right,angle_pid.output,gyro_pid.output,left_pid.output,right_pid.output);
+    // printf("%f,%f,%f\n",fAngle[0],vel_left,gyro_pid.output);
+    printf("%f,%f,%f\n",fAngle[0],fGyro[0],angle_pid.output);
+   /*
+   ???????????????????????????????????????????
+   ???????????
+   ???????????????????????????????????????????p i?????(??????????)
+   */
 
     /***********VELOCITY_CALCULATE&PID_CONTROL************/
     if(tim_elapsed)

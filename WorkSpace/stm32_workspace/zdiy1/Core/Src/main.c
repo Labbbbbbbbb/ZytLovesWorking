@@ -208,7 +208,7 @@ int main(void)
    // printf("angle:%.2f,gyro:%.2f\n",fAngle[0],fGyro[0]);
    // printf("lcnt:%f,rcnt:%f,angle_pid:%.2f,gyro_pid:%.2f,left_pid:%.2f,right_pid:%.2f\n",vel_left,vel_right,angle_pid.output,gyro_pid.output,left_pid.output,right_pid.output);
     // printf("%f,%f,%f\n",fAngle[0],vel_left,gyro_pid.output);
-    printf("%f,%f,%f\n",fAngle[0],fGyro[0],angle_pid.output);
+    printf("%f,%f,%f,%f,%f\n",fAngle[0],fGyro[0],angle_pid.output,vel_left,gyro_pid.output);
    /*
    ???????????????????????????????????????????
    ???????????

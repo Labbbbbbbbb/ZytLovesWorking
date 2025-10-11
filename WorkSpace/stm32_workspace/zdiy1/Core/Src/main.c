@@ -168,7 +168,7 @@ int main(void)
   pid_init(&left_pid, 40, 4, 0.5, 1000, 0,200);
   pid_init(&right_pid,40, 4, 0.5, 1000, 0,200);
   pid_init(&angle_pid,8, 0, 0.2, 160, 0,20);
-  pid_init(&gyro_pid,0.3, 0.2, 0.0, 25, 0,8);
+  pid_init(&gyro_pid,0.3, 0.2, 0.0, 40, 0,8);
   HAL_TIM_Encoder_Start(&htim3,TIM_CHANNEL_1 | TIM_CHANNEL_2);
   HAL_TIM_Encoder_Start(&htim4,TIM_CHANNEL_1 | TIM_CHANNEL_2);
   __HAL_TIM_SetCounter(&htim3,65536/2);

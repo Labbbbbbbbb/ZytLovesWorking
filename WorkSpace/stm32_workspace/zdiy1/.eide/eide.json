@@ -27,7 +27,8 @@
   "targets": {
     "Debug": {
       "excludeList": [
-        "User/balance"
+        "User/balance",
+        "User/Retarget"
       ],
       "toolchain": "GCC",
       "compileConfig": {

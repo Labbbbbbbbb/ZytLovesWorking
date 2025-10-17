@@ -60,28 +60,6 @@
 void SystemClock_Config(void);
 /* USER CODE BEGIN PFP */
 
-//??????,??printf??,??????use MicroLIB	  
-// #if 1
-// #pragma import(__use_no_semihosting)             
-// //??????????                 
-// struct __FILE 
-// { 
-// 	int handle; 
- 
-// }; 
- 
-// FILE __stdout;       
-// //??_sys_exit()??????????   
- 
-// void _sys_exit(int x) 
-// { 
-// 	x = x; 
-// } 
-// //???fputc??
-// int fputc(int ch, FILE *f) {
-// HAL_UART_Transmit(&huart1, (uint8_t *)&ch, 1, 0xffff);
-// return ch;
-// }
 
 // #endif 
 #ifdef __GNUC__
@@ -161,8 +139,6 @@ int main(void)
 	HAL_TIM_Base_Start(&htim3);
 	HAL_TIM_Base_Start(&htim4);
 	HAL_TIM_Base_Start_IT(&htim1);
-	HAL_TIM_IC_Start_IT(&htim4,TIM_CHANNEL_3);
-  HAL_TIM_IC_Start_IT(&htim3,TIM_CHANNEL_1);
   HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_1);
   HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_2);
   pid_init(&left_pid, 40, 4, 0.5, 1000, 0,200);

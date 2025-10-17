@@ -56,7 +56,7 @@ void Control_param_init()
 
 void Angle_Control_Loop()
 {
-    JY901S_Update();
+    // JY901S_Update();
     /***********ANGLE&GYRO_PID_CONTROL************/
     angle_pid.ref=0;
     angle_pid.fdb=fAngle[0];
@@ -89,7 +89,6 @@ void Wheel_Control_Loop()
       right_cnt=__HAL_TIM_GET_COUNTER(&htim4)-65536/2;
       vel_left=left_cnt;  //rpm/28.0)*60.0*100
       vel_right=right_cnt; //rpm/28.0)*60.0*100
-
       left_cnt=0;
       right_cnt=0;
     /*Get_Feedback*/

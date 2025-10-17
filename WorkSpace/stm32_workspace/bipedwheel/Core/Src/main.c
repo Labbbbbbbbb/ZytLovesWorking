@@ -121,6 +121,9 @@ int main(void)
   while (1)
   {
     Angle_Control_Loop();
+    JY901S_Update();
+
+    printf("fangle %f,%f,%f\n",fAngle[0],fAngle[1],fAngle[2]);
     /***********WHEEL_VELOCITY_PID_CONTROL************/
     if(tim_elapsed)
     {

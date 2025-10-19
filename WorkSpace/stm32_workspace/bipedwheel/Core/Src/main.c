@@ -66,6 +66,7 @@ PUTCHAR_PROTOTYPE
     HAL_UART_Transmit(&huart2, (uint8_t *)&ch, 1, 100);
     return ch;
 }
+  uint8_t  buffer[1] ;
 
 /* USER CODE END PFP */
 
@@ -111,25 +112,39 @@ int main(void)
   MX_USART1_UART_Init();
   MX_USART2_UART_Init();
   MX_TIM3_Init();
+  MX_USART3_UART_Init();
+  MX_TIM9_Init();
   /* USER CODE BEGIN 2 */
   Control_Peripheral_init();
   Control_param_init();
+  // printf("B%d\n",0);
+  uint32_t lenth=sprintf(buffer,"B%d\n",-10);
+  HAL_UART_Transmit(&huart3, (uint8_t *)buffer, lenth, 100);
+  //HAL_UART_Transmit(&huart3, (uint8_t *)"A0\n", 3, 100);
+    // for(int16_t i=100;i>0;i--){
+    //   printf("A%d\n",i);
+    //   HAL_Delay(1);
+    // }
+    __HAL_TIM_SetCompare(&htim5,TIM_CHANNEL_1,1500);
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-    Angle_Control_Loop();
-    JY901S_Update();
 
-    printf("fangle %f,%f,%f\n",fAngle[0],fAngle[1],fAngle[2]);
-    /***********WHEEL_VELOCITY_PID_CONTROL************/
-    if(tim_elapsed)
-    {
-      Wheel_Control_Loop();
-		  tim_elapsed=0;
-    }
+    // Angle_Control_Loop();
+    // JY901S_Update();
+    __HAL_TIM_SetCompare(&htim5,TIM_CHANNEL_1,1500);
+    __HAL_TIM_SetCompare(&htim9,TIM_CHANNEL_1,1500);
+
+    // //printf("fangle %f,%f,%f\n",fAngle[0],fAngle[1],fAngle[2]);
+    // /***********WHEEL_VELOCITY_PID_CONTROL************/
+    // if(tim_elapsed)
+    // {
+    //   Wheel_Control_Loop();
+		//   tim_elapsed=0;
+    // }
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */

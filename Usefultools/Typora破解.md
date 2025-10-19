@@ -29,3 +29,10 @@ resources\page-dist\license.html
 
 
 
+2025.10.17新问题：打开typora突然就只有弹窗然后主体出不来了。这时需要设置注册表权限：
+
+右键单击[注册表项](https://zhida.zhihu.com/search?content_id=257889944&content_type=Article&match_order=1&q=注册表项&zhida_source=entity) "计算机\HKEY_CURRENT_USER\Software\Typora"，选择“权限”，然后在上面的框中选中最后一项“Administrators (...)”，再勾选下面的框中“拒绝”下的两个框，最后点击“确认”即可。
+
+跟着这个教程可以一起解决1.10.8弹窗问题：
+
+[Typora 1.10.8 破解教程 - 知乎](https://zhuanlan.zhihu.com/p/1907494778045707340)

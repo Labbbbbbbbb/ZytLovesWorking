@@ -53,6 +53,8 @@ void Control_param_init()
     pid_init(&angle_pid,8, 0, 0.2, 160, 0,20);
     pid_init(&gyro_pid,0.3, 0.2, 0.0, 40, 0,8);
     pid_init(&turn_pid,0.3, 0.1, 0.1, 10, 0,4);
+    IK_Param_Init();
+
 }
 
 
@@ -146,11 +148,11 @@ IKparam IKParam;
 #define PI 3.14159265358979323846
 void IK_Param_Init(void)
 {
-    L1=100;
+    L1=60;
     L2=100; 
     L3=100;
-    L4=100;
-    L5=50;
+    L4=60;
+    L5=30;
 }
 
 void Servo_IK_Control(float height)
@@ -161,7 +163,7 @@ void Servo_IK_Control(float height)
     IKParam.YRight=height;
 
   float alpha1,alpha2,beta1,beta2;
-  uint16_t servoLeftFront,servoLeftRear,servoRightFront,servoRightRear;
+  __IO uint16_t servoLeftFront,servoLeftRear,servoRightFront,servoRightRear;
 
   float aLeft = 2 * IKParam.XLeft * L1;
   float bLeft = 2 * IKParam.YLeft * L1;
@@ -178,9 +180,9 @@ void Servo_IK_Control(float height)
   alpha1 = (alpha1 >= 0)?alpha1:(alpha1 + 2 * PI);
   alpha2 = (alpha2 >= 0)?alpha2:(alpha2 + 2 * PI);
 
-  if(alpha1 >= PI/4) IKParam.alphaLeft = alpha1;        //会因舵机的不同而不同
+  if(alpha1 >= PI/2) IKParam.alphaLeft = alpha1;        //会因舵机的不同而不同
   else IKParam.alphaLeft = alpha2;
-  if(beta1 >= 0 && beta1 <= PI/4) IKParam.betaLeft = beta1;
+  if(beta1 >= 0 && beta1 <= PI/2) IKParam.betaLeft = beta1;
   else IKParam.betaLeft = beta2;
   
   float aRight = 2 * IKParam.XRight * L1;
@@ -201,31 +203,39 @@ void Servo_IK_Control(float height)
   alpha1 = (alpha1 >= 0)?alpha1:(alpha1 + 2 * PI);
   alpha2 = (alpha2 >= 0)?alpha2:(alpha2 + 2 * PI);
 
-  if(alpha1 >= PI/4) IKParam.alphaRight = alpha1;   //会因舵机的不同而不同
+  if(alpha1 >= PI/2) IKParam.alphaRight = alpha1;   //会因舵机的不同而不同
   else IKParam.alphaRight = alpha2;
-  if(beta1 >= 0 && beta1 <= PI/4) IKParam.betaRight = beta1;
+  if(beta1 >= 0 && beta1 <= PI/2) IKParam.betaRight = beta1;
   else IKParam.betaRight = beta2;
 
-  int alphaLeftToAngle = (int)((IKParam.alphaLeft / 6.28) * 360);//弧度转角度
-  int betaLeftToAngle = (int)((IKParam.betaLeft / 6.28) * 360);
+  __IO int alphaLeftToAngle = (int)((IKParam.alphaLeft / 6.28) * 360);//弧度转角度
+  __IO int betaLeftToAngle = (int)((IKParam.betaLeft / 6.28) * 360);
 
-  int alphaRightToAngle = (int)((IKParam.alphaRight / 6.28) * 360);
-  int betaRightToAngle = (int)((IKParam.betaRight / 6.28) * 360);
+  __IO int alphaRightToAngle = (int)((IKParam.alphaRight / 6.28) * 360);
+  __IO int betaRightToAngle = (int)((IKParam.betaRight / 6.28) * 360);
 
-  servoLeftFront = 90 + betaLeftToAngle;
-  servoLeftRear = 90 + alphaLeftToAngle;
-  servoRightFront = 270 - betaRightToAngle;
-  servoRightRear = 270 - alphaRightToAngle;
+  // servoLeftFront = 90 + betaLeftToAngle;
+  // servoLeftRear = 90 + alphaLeftToAngle;
+  // servoRightFront = 270 - betaRightToAngle;
+  // servoRightRear = 270 - alphaRightToAngle;
 
-   int ch1=(int)(servoLeftFront/270.0*2000+500);        //待验证
-   int ch2=(int)(servoLeftRear/270.0*2000+500);
-   int ch3=(int)(servoRightFront/270.0*2000+500);
-   int ch4=(int)(servoRightRear/270*2000+500);
+  servoLeftFront =   betaLeftToAngle;
+  servoLeftRear =   alphaLeftToAngle;
+  servoRightFront = 180 - betaRightToAngle;
+  servoRightRear = 180 - alphaRightToAngle;
+   int ch1=(int)(servoLeftFront/300.0*2000+500);        //待验证
+   int ch2=(int)(servoLeftRear/300.0*2000+500);
+   int ch3=(int)(servoRightFront/300.0*2000+500);
+   int ch4=(int)(servoRightRear/300.0*2000+500);
     __HAL_TIM_SET_COMPARE(&htim5, TIM_CHANNEL_1, ch1);
     __HAL_TIM_SET_COMPARE(&htim5, TIM_CHANNEL_2, ch2);
     __HAL_TIM_SET_COMPARE(&htim5, TIM_CHANNEL_3, ch3);
     __HAL_TIM_SET_COMPARE(&htim5, TIM_CHANNEL_4, ch4);
 }
-
+//安装方法：
+//先运行setcompare(500），然后装四个单向舵盘朝前方
+//调好L1~L5的尺寸参数后，,给出一个合理的高度值height（单位mm），合理指它满足机械结构的要求，然后运行Servo_IK_Control(height);
+//舵机会转到对应的位置，此时左边舵盘所指方向即舵机在该高度会转过的alpha和beta角度，右边则是舵盘的反向延长线为响应角度
+//此时机械顺着这个角度安装腿部即可
 
 //https://gitee.com/StackForce/bipedal_wheeled_robot/blob/master/%E8%AF%BE%E7%A8%8B%E4%BB%A3%E7%A0%81/%E7%AC%AC%E5%85%AD%E8%AF%BE_%E8%BF%90%E5%8A%A8%E5%AD%A6%E9%80%86%E8%A7%A3/lesson6_HeightCtrl/src/main.cpp

@@ -125,7 +125,8 @@ int main(void)
     //   printf("A%d\n",i);
     //   HAL_Delay(1);
     // }
-    __HAL_TIM_SetCompare(&htim5,TIM_CHANNEL_1,1500);
+    // __HAL_TIM_SetCompare(&htim2,TIM_CHANNEL_1,1500);
+    // __HAL_TIM_SetCompare(&htim5,TIM_CHANNEL_1,1500);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -133,18 +134,20 @@ int main(void)
   while (1)
   {
 
-    // Angle_Control_Loop();
-    // JY901S_Update();
-    __HAL_TIM_SetCompare(&htim5,TIM_CHANNEL_1,1500);
-    __HAL_TIM_SetCompare(&htim9,TIM_CHANNEL_1,1500);
-
-    // //printf("fangle %f,%f,%f\n",fAngle[0],fAngle[1],fAngle[2]);
-    // /***********WHEEL_VELOCITY_PID_CONTROL************/
-    // if(tim_elapsed)
-    // {
-    //   Wheel_Control_Loop();
-		//   tim_elapsed=0;
-    // }
+    Angle_Control_Loop();
+    JY901S_Update();
+    // __HAL_TIM_SetCompare(&htim5,TIM_CHANNEL_1,500);
+    // __HAL_TIM_SetCompare(&htim5,TIM_CHANNEL_2,500);
+    // __HAL_TIM_SetCompare(&htim5,TIM_CHANNEL_3,500);
+    // __HAL_TIM_SetCompare(&htim5,TIM_CHANNEL_4,500);
+    Servo_IK_Control(100.0f);
+    //printf("fangle %f,%f,%f\n",fAngle[0],fAngle[1],fAngle[2]);
+    /***********WHEEL_VELOCITY_PID_CONTROL************/
+    if(tim_elapsed)
+    {
+      Wheel_Control_Loop();
+		  tim_elapsed=0;
+    }
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */

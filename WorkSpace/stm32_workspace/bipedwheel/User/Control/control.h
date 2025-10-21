@@ -20,5 +20,8 @@ void Control_Peripheral_init(void);
 void Control_param_init(void);
 void Angle_Control_Loop(void);
 void Wheel_Control_Loop(void);
+void Servo_IK_Control(float height);
+void IK_Param_Init(void);
+
 
 #endif

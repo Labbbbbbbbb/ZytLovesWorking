@@ -9,8 +9,8 @@ PID_t turn_pid;
 
 int16_t left_cnt;  
 int16_t right_cnt;
-float vel_left;
-float vel_right;
+int16_t vel_left;
+int16_t vel_right;
 float outputright,outputleft;
 
 float left_velocity,right_velocity;
@@ -48,10 +48,10 @@ void Control_Peripheral_init(void)
 
 void Control_param_init()
 {
-    pid_init(&left_pid, 40, 4, 0.5, 1000, 0,200);
-    pid_init(&right_pid,40, 4, 0.5, 1000, 0,200);
+    pid_init(&left_pid, 4, 1, 0.5, 100, 0,20);
+    pid_init(&right_pid,4, 1, 0.5, 100, 0,20);
     pid_init(&angle_pid,8, 0, 0.2, 160, 0,20);
-    pid_init(&gyro_pid,0.3, 0.2, 0.0, 40, 0,8);
+    pid_init(&gyro_pid,0.5, 0.3, 0.0, 100, 0,20);
     pid_init(&turn_pid,0.3, 0.1, 0.1, 10, 0,4);
     IK_Param_Init();
 
@@ -86,49 +86,19 @@ void Velocity_Control_Loop(float forward,float turn)
     right_velocity=forward+turn_pid.output;
 }
 
+  uint8_t  bufferl[1] ;
+  uint8_t  bufferr[1] ;
+
 void Wheel_Control_Loop()
 {
-    /*Get_Feedback*/
-      left_cnt=__HAL_TIM_GET_COUNTER(&htim3)-65536/2;
-      right_cnt=__HAL_TIM_GET_COUNTER(&htim4)-65536/2;
-      vel_left=left_cnt;  //rpm/28.0)*60.0*100
-      vel_right=right_cnt; //rpm/28.0)*60.0*100
-      left_cnt=0;
-      right_cnt=0;
-    /*Get_Feedback*/
+    
+      int16_t vel_left=(int16_t)(gyro_pid.output+left_velocity);   //直立环的输出叠加车身的速度
+      int16_t vel_right=(int16_t)(gyro_pid.output+right_velocity);
+      uint32_t lenth_l=sprintf(bufferl,"A%d\n",vel_left);
+      HAL_UART_Transmit(&huart3, (uint8_t *)bufferl, lenth_l, 100);
 
-    /***********PID_CONTROL************/
-      left_pid.ref=gyro_pid.output+left_velocity;   //直立环的输出叠加车身的速度
-      right_pid.ref=gyro_pid.output+right_velocity;
-      left_pid.fdb=vel_left;
-      right_pid.fdb=vel_right;
-      PID_Calc_P(&left_pid);
-      PID_Calc_P(&right_pid);
-      if(left_pid.output>0)
-      {
-        HAL_GPIO_WritePin(Left_IN1_GPIO_Port, Left_IN1_Pin, GPIO_PIN_SET);
-        HAL_GPIO_WritePin(Left_IN2_GPIO_Port, Left_IN2_Pin, GPIO_PIN_RESET);
-        __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_1, left_pid.output);
-      }else
-      {
-        HAL_GPIO_WritePin(Left_IN1_GPIO_Port, Left_IN1_Pin, GPIO_PIN_RESET);
-        HAL_GPIO_WritePin(Left_IN2_GPIO_Port, Left_IN2_Pin, GPIO_PIN_SET);
-        __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_1, 1000+left_pid.output);
-      }
-      if(right_pid.output>0)
-      {
-        HAL_GPIO_WritePin(Right_IN1_GPIO_Port, Right_IN1_Pin, GPIO_PIN_RESET);
-        HAL_GPIO_WritePin(Right_IN2_GPIO_Port, Right_IN2_Pin, GPIO_PIN_SET);
-        __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_2, right_pid.output);
-      }else
-      {
-        HAL_GPIO_WritePin(Right_IN1_GPIO_Port, Right_IN1_Pin, GPIO_PIN_SET);
-        HAL_GPIO_WritePin(Right_IN2_GPIO_Port, Right_IN2_Pin, GPIO_PIN_RESET);
-        __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_2, 1000+right_pid.output);
-      }
-
-      __HAL_TIM_SetCounter(&htim3,65536/2);
-      __HAL_TIM_SetCounter(&htim4,65536/2);
+      uint32_t lenth_r=sprintf(bufferr,"B%d\n",vel_right);
+      HAL_UART_Transmit(&huart3, (uint8_t *)bufferr, lenth_r, 100);
 
     /***********PID_CONTROL************/
 
@@ -148,18 +118,18 @@ IKparam IKParam;
 #define PI 3.14159265358979323846
 void IK_Param_Init(void)
 {
-    L1=60;
-    L2=100; 
-    L3=100;
-    L4=60;
-    L5=30;
+    L1=65;
+    L2=75; 
+    L3=75;
+    L4=65;
+    L5=45;
 }
 
 void Servo_IK_Control(float height)
 {
-    IKParam.XLeft=0;
+    IKParam.XLeft=30;
     IKParam.YLeft=height;
-    IKParam.XRight=0;
+    IKParam.XRight=30;
     IKParam.YRight=height;
 
   float alpha1,alpha2,beta1,beta2;
@@ -218,11 +188,11 @@ void Servo_IK_Control(float height)
   // servoLeftRear = 90 + alphaLeftToAngle;
   // servoRightFront = 270 - betaRightToAngle;
   // servoRightRear = 270 - alphaRightToAngle;
-
-  servoLeftFront =   betaLeftToAngle;
-  servoLeftRear =   alphaLeftToAngle;
-  servoRightFront = 180 - betaRightToAngle;
-  servoRightRear = 180 - alphaRightToAngle;
+uint16_t offset=20;   //没招了 不知道为什么y给到30以下反而会站的更高了，于是只能最低给到30，加个offset让它蹲低一点
+  servoLeftFront =   betaLeftToAngle-offset;
+  servoLeftRear =   alphaLeftToAngle+offset;
+  servoRightFront = 180 - betaRightToAngle+offset;
+  servoRightRear = 180 - alphaRightToAngle-offset;
    int ch1=(int)(servoLeftFront/300.0*2000+500);        //待验证
    int ch2=(int)(servoLeftRear/300.0*2000+500);
    int ch3=(int)(servoRightFront/300.0*2000+500);

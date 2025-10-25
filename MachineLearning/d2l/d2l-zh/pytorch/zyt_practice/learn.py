@@ -4,7 +4,7 @@ import torch
 from d2l import torch as d2l
 
 #%生成数据
-def synthetic_data(w, b, num_examples):  #@save
+def synthetic_data(w, b, num_examples):  #@save     #d2l库有，这里只是自己定义了一个
     """生成y=Xw+b+噪声"""
     X = torch.normal(0, 1, (num_examples, len(w)))
     y = torch.matmul(X, w) + b

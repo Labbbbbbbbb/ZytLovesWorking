@@ -9,8 +9,8 @@ PID_t turn_pid;
 
 int16_t left_cnt;  
 int16_t right_cnt;
-int16_t vel_left;
-int16_t vel_right;
+__IO int16_t vel_left;
+__IO int16_t vel_right;
 float outputright,outputleft;
 
 float left_velocity,right_velocity;
@@ -19,7 +19,7 @@ void Control_Peripheral_init(void)
 {
   JY901S_Init();
   /*Motor*/
-  HAL_TIM_Base_Start(&htim1); //Update_Timer
+  HAL_TIM_Base_Start_IT(&htim1); //Update_Timer
   HAL_TIM_Base_Start(&htim2); //PWM_Timer
   HAL_TIM_Base_Start(&htim3); //Left_Encoder_Timer
   HAL_TIM_Base_Start(&htim4); //Right_Encoder_Timer
@@ -92,12 +92,12 @@ void Velocity_Control_Loop(float forward,float turn)
 void Wheel_Control_Loop()
 {
     
-      int16_t vel_left=(int16_t)(gyro_pid.output+left_velocity);   //直立环的输出叠加车身的速度
-      int16_t vel_right=(int16_t)(gyro_pid.output+right_velocity);
-      uint32_t lenth_l=sprintf(bufferl,"A%d\n",vel_left);
+      vel_left=(int16_t)(gyro_pid.output+left_velocity);   //直立环的输出叠加车身的速度
+      vel_right=(int16_t)(gyro_pid.output+right_velocity);
+      uint32_t lenth_l=sprintf(bufferl,"B%d\n",vel_left);
       HAL_UART_Transmit(&huart3, (uint8_t *)bufferl, lenth_l, 100);
 
-      uint32_t lenth_r=sprintf(bufferr,"B%d\n",vel_right);
+      uint32_t lenth_r=sprintf(bufferr,"A%d\n",-vel_right);
       HAL_UART_Transmit(&huart3, (uint8_t *)bufferr, lenth_r, 100);
 
     /***********PID_CONTROL************/

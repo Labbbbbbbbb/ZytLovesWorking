@@ -131,21 +131,24 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-
+    uint8_t buffer[1];
     JY901S_Update();
     Angle_Control_Loop();
     Velocity_Control_Loop(0,0);
-      
+      // uint32_t lenth=sprintf(buffer,"A%d\n",10);
+      // HAL_UART_Transmit(&huart3, (uint8_t *)buffer, lenth, 100);
+      // lenth=sprintf(buffer,"B%d\n",10);
+      // HAL_UART_Transmit(&huart3, (uint8_t *)buffer, lenth, 100);
     // __HAL_TIM_SetCompare(&htim5,TIM_CHANNEL_1,500);
     // __HAL_TIM_SetCompare(&htim5,TIM_CHANNEL_2,500);
     // __HAL_TIM_SetCompare(&htim5,TIM_CHANNEL_3,500);
     // __HAL_TIM_SetCompare(&htim5,TIM_CHANNEL_4,500);
      Servo_IK_Control(30.0f); //范围30-130
-    printf("fangle %f,%d,%d\n",fAngle[0],vel_left,vel_right);
     /***********WHEEL_VELOCITY_PID_CONTROL************/
     if(tim_elapsed)
     {
       Wheel_Control_Loop();
+      printf("fangle %f,%d,%d\n",fAngle[0],vel_left,vel_right);
 		  tim_elapsed=0;
     }
     /* USER CODE END WHILE */

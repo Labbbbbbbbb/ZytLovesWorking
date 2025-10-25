@@ -334,8 +334,8 @@ void HAL_TIM_Base_MspInit(TIM_HandleTypeDef* tim_baseHandle)
     __HAL_RCC_TIM1_CLK_ENABLE();
 
     /* TIM1 interrupt Init */
-    HAL_NVIC_SetPriority(TIM1_BRK_TIM9_IRQn, 0, 0);
-    HAL_NVIC_EnableIRQ(TIM1_BRK_TIM9_IRQn);
+    HAL_NVIC_SetPriority(TIM1_UP_TIM10_IRQn, 0, 0);
+    HAL_NVIC_EnableIRQ(TIM1_UP_TIM10_IRQn);
   /* USER CODE BEGIN TIM1_MspInit 1 */
 
   /* USER CODE END TIM1_MspInit 1 */
@@ -358,10 +358,6 @@ void HAL_TIM_Base_MspInit(TIM_HandleTypeDef* tim_baseHandle)
   /* USER CODE END TIM9_MspInit 0 */
     /* TIM9 clock enable */
     __HAL_RCC_TIM9_CLK_ENABLE();
-
-    /* TIM9 interrupt Init */
-    HAL_NVIC_SetPriority(TIM1_BRK_TIM9_IRQn, 0, 0);
-    HAL_NVIC_EnableIRQ(TIM1_BRK_TIM9_IRQn);
   /* USER CODE BEGIN TIM9_MspInit 1 */
 
   /* USER CODE END TIM9_MspInit 1 */
@@ -530,14 +526,7 @@ void HAL_TIM_Base_MspDeInit(TIM_HandleTypeDef* tim_baseHandle)
     __HAL_RCC_TIM1_CLK_DISABLE();
 
     /* TIM1 interrupt Deinit */
-  /* USER CODE BEGIN TIM1:TIM1_BRK_TIM9_IRQn disable */
-    /**
-    * Uncomment the line below to disable the "TIM1_BRK_TIM9_IRQn" interrupt
-    * Be aware, disabling shared interrupt may affect other IPs
-    */
-    /* HAL_NVIC_DisableIRQ(TIM1_BRK_TIM9_IRQn); */
-  /* USER CODE END TIM1:TIM1_BRK_TIM9_IRQn disable */
-
+    HAL_NVIC_DisableIRQ(TIM1_UP_TIM10_IRQn);
   /* USER CODE BEGIN TIM1_MspDeInit 1 */
 
   /* USER CODE END TIM1_MspDeInit 1 */
@@ -560,16 +549,6 @@ void HAL_TIM_Base_MspDeInit(TIM_HandleTypeDef* tim_baseHandle)
   /* USER CODE END TIM9_MspDeInit 0 */
     /* Peripheral clock disable */
     __HAL_RCC_TIM9_CLK_DISABLE();
-
-    /* TIM9 interrupt Deinit */
-  /* USER CODE BEGIN TIM9:TIM1_BRK_TIM9_IRQn disable */
-    /**
-    * Uncomment the line below to disable the "TIM1_BRK_TIM9_IRQn" interrupt
-    * Be aware, disabling shared interrupt may affect other IPs
-    */
-    /* HAL_NVIC_DisableIRQ(TIM1_BRK_TIM9_IRQn); */
-  /* USER CODE END TIM9:TIM1_BRK_TIM9_IRQn disable */
-
   /* USER CODE BEGIN TIM9_MspDeInit 1 */
 
   /* USER CODE END TIM9_MspDeInit 1 */

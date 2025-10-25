@@ -15,8 +15,8 @@ typedef struct{
 extern PID_t left_pid,right_pid;
 extern PID_t angle_pid;
 extern PID_t gyro_pid;
-extern int16_t vel_left;
-extern int16_t vel_right;
+extern __IO int16_t vel_left;
+extern __IO int16_t vel_right;
 
 void Control_Peripheral_init(void);
 void Control_param_init(void);

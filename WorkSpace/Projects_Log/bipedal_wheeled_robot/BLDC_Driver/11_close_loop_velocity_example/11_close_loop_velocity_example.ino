@@ -21,13 +21,13 @@ TwoWire I2Cone = TwoWire(0);
 MagneticSensorI2C sensor2 = MagneticSensorI2C(AS5600_I2C);
 TwoWire I2Ctwo = TwoWire(1);
 
-// 在线电流检测实例
+// 在线电流检测实例debug
 InlineCurrentSense current_sense1 = InlineCurrentSense(0.01, 50.0, 39, 36);
 InlineCurrentSense current_sense2 = InlineCurrentSense(0.01, 50.0, 35, 34);
 
 // commander通信实例
-Commander command = Commander(Serial1);
-//Commander command1 = Commander(Serial1);
+Commander command = Commander(Serial);
+//Commander command = Commander(Serial1);
 void doMotor1(char* cmd) {
   command.motor(&motor1, cmd);
   //command1.motor(&motor1, cmd);
@@ -46,7 +46,8 @@ void setup() {
   Serial.begin(115200);
   Serial1.begin(115200,SERIAL_8N1,16,17);
   
-  board_init();
+  //debug
+  //board_init();
 
   // 编码器设置
   I2Cone.begin(19, 18, 400000UL); // AS5600_M0
@@ -58,7 +59,7 @@ void setup() {
   motor1.linkSensor(&sensor1);
   motor2.linkSensor(&sensor2);
 
-  // 驱动器设置
+  // 驱动器设置debug
   driver1.voltage_power_supply = get_vin_Volt();
   driver1.init();
   motor1.linkDriver(&driver1);
@@ -66,11 +67,11 @@ void setup() {
   driver2.init();
   motor2.linkDriver(&driver2);
 
-  // 电流限制
+  // 电流限制debug
   motor1.current_limit = 1;
   motor2.current_limit = 1;
 
-  // 电压限制
+  // 电压限制debug
   motor1.voltage_limit = get_vin_Volt();
   motor2.voltage_limit = get_vin_Volt();
 
@@ -89,18 +90,18 @@ void setup() {
   //  current_sense2.skip_align = true;
   motor2.linkCurrentSense(&current_sense2);
 
-  // 控制环
+  // 控制环debug
   // 其他模式 TorqueControlType::voltage TorqueControlType::dc_current
   motor1.torque_controller = TorqueControlType::foc_current;
   motor1.controller = MotionControlType::velocity;
   motor2.torque_controller = TorqueControlType::foc_current;
   motor2.controller = MotionControlType::velocity;
-
+//debug
   motor1.voltage_sensor_align = 5;
   motor2.voltage_sensor_align = 5;
 
   // FOC电流控制PID参数
-  motor1.PID_current_q.P = 10;
+  motor1.PID_current_q.P = 5;
   motor1.PID_current_q.I = 1000;
   motor1.PID_current_d.P = 5;
   motor1.PID_current_d.I = 1000;
@@ -108,32 +109,32 @@ void setup() {
   motor1.LPF_current_d.Tf = 0.002;  // 1ms default
 
   motor2.PID_current_q.P = 5;   //当前电机
-  motor2.PID_current_q.I = 1000;
+  motor2.PID_current_q.I = 100;
   motor2.PID_current_d.P = 5;
   motor2.PID_current_d.I = 1000;
   motor2.LPF_current_q.Tf = 0.002;  // 1ms default
   motor2.LPF_current_d.Tf = 0.002;  // 1ms default
 
-  // 速度环PID参数
-  motor1.PID_velocity.P = 0.05;
+  // 速度环PID参数 0.05 0.12 0
+  motor1.PID_velocity.P = 0.021;
   motor1.PID_velocity.I = 0.12;
   motor1.PID_velocity.D = 0;
 
-  motor2.PID_velocity.P = 0.05;
+  motor2.PID_velocity.P = 0.021;
   motor2.PID_velocity.I = 0.12;
   motor2.PID_velocity.D = 0;
   // default voltage_power_supply
 
   // 速度限制
-  motor1.velocity_limit = 20;
-  motor2.velocity_limit = 20;
+  motor1.velocity_limit = 80;
+  motor2.velocity_limit = 80;
 
   // monitor接口设置
   // comment out if not needed
   motor1.useMonitoring(Serial);
   motor2.useMonitoring(Serial);
 
-  // monitor相关设置
+  // monitor相关设置debug
   motor1.monitor_downsample = 0;
   motor1.monitor_variables = _MON_TARGET | _MON_VEL | _MON_ANGLE | _MON_CURR_Q;
   motor2.monitor_downsample = 0;
@@ -170,6 +171,8 @@ void loop() {
   motor2.move();
 
   command.run();
+  Serial.printf("c:%.2f,2:%.2f\n",motor1.current_sp,motor1.current.q);
+  
   //command1.run();
 }
 

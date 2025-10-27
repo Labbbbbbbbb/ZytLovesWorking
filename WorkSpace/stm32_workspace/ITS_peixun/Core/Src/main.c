@@ -18,6 +18,7 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "tim.h"
 #include "usart.h"
 #include "gpio.h"
 
@@ -89,6 +90,7 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_USART1_UART_Init();
+  MX_TIM1_Init();
   /* USER CODE BEGIN 2 */
   //HAL_UART_Receive_IT(&huart1, (uint8_t *)&(huart1.Instance->DR), 1); // 重新开启中断
   // StepperMotorControl_init(&moto1, 1);
@@ -96,7 +98,8 @@ int main(void)
   // StepperMotorControl_init(&moto3, 3);
   // StepperMotorControl_init(&moto4, 4);
   // StepperMotorControl_init_location(&moto_8, 1);
-
+  HAL_TIM_Base_Start(&htim1);
+  HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -111,6 +114,7 @@ int main(void)
         HAL_Delay(1);
         HAL_GPIO_WritePin(STEP_GPIO_Port, STEP_Pin, GPIO_PIN_RESET);
         HAL_Delay(1);
+        __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, 500); //
     }
     //set_speed(&moto1, 1, 1000,0,0);
     // set_location(&moto_8, 0, 1000,50,2000,0,0);

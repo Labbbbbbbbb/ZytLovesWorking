@@ -127,9 +127,9 @@ void IK_Param_Init(void)
 
 void Servo_IK_Control(float height)
 {
-    IKParam.XLeft=30;
+    IKParam.XLeft=25;//30
     IKParam.YLeft=height;
-    IKParam.XRight=30;
+    IKParam.XRight=25;
     IKParam.YRight=height;
 
   float alpha1,alpha2,beta1,beta2;
@@ -188,7 +188,7 @@ void Servo_IK_Control(float height)
   // servoLeftRear = 90 + alphaLeftToAngle;
   // servoRightFront = 270 - betaRightToAngle;
   // servoRightRear = 270 - alphaRightToAngle;
-uint16_t offset=20;   //没招了 不知道为什么y给到30以下反而会站的更高了，于是只能最低给到30，加个offset让它蹲低一点
+  uint16_t offset=20;   //没招了 不知道为什么y给到30以下反而会站的更高了，于是只能最低给到30，加个offset让它蹲低一点 offset=20
   servoLeftFront =   betaLeftToAngle-offset;
   servoLeftRear =   alphaLeftToAngle+offset;
   servoRightFront = 180 - betaRightToAngle+offset;
@@ -197,10 +197,12 @@ uint16_t offset=20;   //没招了 不知道为什么y给到30以下反而会站�
    int ch2=(int)(servoLeftRear/300.0*2000+500);
    int ch3=(int)(servoRightFront/300.0*2000+500);
    int ch4=(int)(servoRightRear/300.0*2000+500);
+   if(ch1>=500&&ch1<=2500&&ch2>=500&&ch2<=2500&&ch3>=500&&ch3<=2500&&ch4>=500&&ch4<=2500){
     __HAL_TIM_SET_COMPARE(&htim5, TIM_CHANNEL_1, ch1);
     __HAL_TIM_SET_COMPARE(&htim5, TIM_CHANNEL_2, ch2);
     __HAL_TIM_SET_COMPARE(&htim5, TIM_CHANNEL_3, ch3);
     __HAL_TIM_SET_COMPARE(&htim5, TIM_CHANNEL_4, ch4);
+   }
 }
 //安装方法：
 //先运行setcompare(500），然后装四个单向舵盘朝前方

@@ -19,7 +19,7 @@ void DFOC_M1_alignSensor(int _PP,int _DIR);
 float S0_electricalAngle();
 float S1_electricalAngle();
 float cal_Iq_Id(float current_a,float current_b,float angle_el);
-float serial_motor_target();
+float serial_motor_target(int n);
 String serialReceiveUserCommand();
 //传感器读取
 float DFOC_M0_Velocity();

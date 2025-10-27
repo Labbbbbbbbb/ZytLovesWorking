@@ -356,9 +356,9 @@ String serialReceiveUserCommand() {
   
   String command = "";
 
-  while (Serial.available()) {
+  while (Serial1.available()) {
     // get the new byte:
-    char inChar = (char)Serial.read();
+    char inChar = (char)Serial1.read();
     // add it to the string buffer:
     received_chars += inChar;
 
@@ -371,8 +371,14 @@ String serialReceiveUserCommand() {
       commaPosition = command.indexOf('\n');//检测字符串中的逗号
       if(commaPosition != -1)//如果有逗号存在就向下执行
       {
-          M0_target = command.substring(0,commaPosition).toDouble();            //电机角度
+        if(command.startsWith("A")){
+          M1_target = command.substring(1,commaPosition).toDouble();            //电机角度
+          Serial.println(M1_target);
+        }
+         else if(command.startsWith("B")){
+          M0_target = command.substring(1,commaPosition).toDouble();            //电机角度
           Serial.println(M0_target);
+          }
       }
       // reset the command buffer 
       received_chars = "";
@@ -382,9 +388,10 @@ String serialReceiveUserCommand() {
 }
 
 
-float serial_motor_target()
+float serial_motor_target(int n)
 {
-  return M0_target;
+if(n==0)  return M0_target;
+else return M1_target;
 }
 
 

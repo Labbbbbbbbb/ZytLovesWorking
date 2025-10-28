@@ -117,8 +117,6 @@ int main(void)
   Control_Peripheral_init();
   Control_param_init();
   // printf("B%d\n",0);
-  
-  //HAL_UART_Transmit(&huart3, (uint8_t *)"A0\n", 3, 100);
     // for(int16_t i=100;i>0;i--){
     //   printf("A%d\n",i);
     //   HAL_Delay(1);
@@ -131,7 +129,6 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-    uint8_t buffer[1];
     JY901S_Update();
     Angle_Control_Loop();
     Velocity_Control_Loop(0,0);
@@ -143,18 +140,18 @@ int main(void)
     // __HAL_TIM_SetCompare(&htim5,TIM_CHANNEL_2,500);
     // __HAL_TIM_SetCompare(&htim5,TIM_CHANNEL_3,500);
     // __HAL_TIM_SetCompare(&htim5,TIM_CHANNEL_4,500);
-    for(int i=130;i>=30;i=i-5){
-     Servo_IK_Control((float)i); //范围30-130
-      HAL_Delay(50);
-    }
-      HAL_Delay(1000);
-     //Servo_IK_Control(30.0f); //范围30-130
+    // for(int i=130;i>=30;i=i-5){
+    //  Servo_IK_Control((float)i); //范围30-130
+    //   HAL_Delay(50);
+    // }
+    //   HAL_Delay(1000);
+     Servo_IK_Control(30.0f); //范围30-130
 
     /***********WHEEL_VELOCITY_PID_CONTROL************/
     if(tim_elapsed)
     {
       Wheel_Control_Loop();
-      printf("fangle %f,%d,%d\n",fAngle[0],vel_left,vel_right);
+      //printf("fangle %f,%d,%d\n",fAngle[0],vel_left,vel_right);
 		  tim_elapsed=0;
     }
     /* USER CODE END WHILE */

@@ -71,7 +71,7 @@ void loop()
       count=0;
       //Serial.printf("%f\n", DFOC_M0_Current());
       //Serial.printf("%f,%f,%f,%f\n", DFOC_M0_Current(),debug, DFOC_M0_Velocity(),serial_motor_target());
-      Serial.printf("%f,%f,%f\n", DFOC_M0_Current(),debug,DFOC_M0_Velocity());
+      Serial1.printf("%f,%f,%f,%f\n", DFOC_M0_Current(),DFOC_M0_Velocity(),DFOC_M1_Current(),DFOC_M1_Velocity());
       // Serial.printf("%f,%f,%f\n", DFOC_M0_Angle(), S0_electricalAngle(),S1_electricalAngle());
       // Serial.printf("%f,%f,%f\n", DFOC_M0_Current(), DFOC_M1_Current(),serial_motor_target());
   }

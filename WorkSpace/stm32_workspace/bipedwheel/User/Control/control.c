@@ -50,8 +50,8 @@ void Control_param_init()
 {
     pid_init(&left_pid, 4, 1, 0.5, 100, 0,20);
     pid_init(&right_pid,4, 1, 0.5, 100, 0,20);
-    pid_init(&angle_pid,8, 0, 0.2, 160, 0,20);
-    pid_init(&gyro_pid,0.5, 0.3, 0.0, 100, 0,20);
+    pid_init(&angle_pid,2, 0, 0.1, 50, 0,15);
+    pid_init(&gyro_pid,0.01, 0.03, 0.0, 55, 0,20);
     pid_init(&turn_pid,0.3, 0.1, 0.1, 10, 0,4);
     IK_Param_Init();
 
@@ -82,23 +82,26 @@ void Velocity_Control_Loop(float forward,float turn)
     turn_pid.ref=turn;
     turn_pid.fdb=fGyro[2];  //Z轴陀螺仪
     PID_Calc_P(&turn_pid);
-    left_velocity=forward-turn_pid.output;
-    right_velocity=forward+turn_pid.output;
+    left_velocity=forward;//+turn_pid.output;
+    right_velocity=forward;//-turn_pid.output;
 }
 
-  uint8_t  bufferl[1] ;
-  uint8_t  bufferr[1] ;
+  uint8_t  bufferl[10] ;
+  uint8_t  bufferr[10] ;
 
 void Wheel_Control_Loop()
 {
     
-      vel_left=(int16_t)(gyro_pid.output+left_velocity);   //直立环的输出叠加车身的速度
-      vel_right=(int16_t)(gyro_pid.output+right_velocity);
-      uint32_t lenth_l=sprintf(bufferl,"B%d\n",vel_left);
+      // vel_left=(int16_t)(gyro_pid.output+left_velocity);   //直立环的输出叠加车身的速度
+      // vel_right=(int16_t)(gyro_pid.output+right_velocity);
+      vel_left=(int16_t)(gyro_pid.output);   //直立环的输出叠加车身的速度
+      vel_right=(int16_t)(gyro_pid.output);
+      uint32_t lenth_l=sprintf(bufferl,"B%d\n",-vel_left);
       HAL_UART_Transmit(&huart3, (uint8_t *)bufferl, lenth_l, 100);
 
-      uint32_t lenth_r=sprintf(bufferr,"A%d\n",-vel_right);
+      uint32_t lenth_r=sprintf(bufferr,"A%d\n",vel_right);
       HAL_UART_Transmit(&huart3, (uint8_t *)bufferr, lenth_r, 100);
+      printf("%.2f,%.2f,%.2f,%.2f\n",(float)vel_left,(float)vel_right,angle_pid.output,gyro_pid.output);
 
     /***********PID_CONTROL************/
 
@@ -111,7 +114,7 @@ void Wheel_Control_Loop()
 // printf("%f,%f,%f\n",fAngle[0],vel_left,gyro_pid.output);
 // printf("%f,%f,%f,%f,%f\n",fAngle[0],fGyro[0],angle_pid.output,vel_left,gyro_pid.output);
 
-float L1,L2,L3,L4,L5;
+__IO uint16_t L1,L2,L3,L4,L5;
 //float alphaLeftToAngle,betaLeftToAngle,alphaRightToAngle,betaRightToAngle;
 
 IKparam IKParam;
@@ -188,7 +191,7 @@ void Servo_IK_Control(float height)
   // servoLeftRear = 90 + alphaLeftToAngle;
   // servoRightFront = 270 - betaRightToAngle;
   // servoRightRear = 270 - alphaRightToAngle;
-  uint16_t offset=20;   //没招了 不知道为什么y给到30以下反而会站的更高了，于是只能最低给到30，加个offset让它蹲低一点 offset=20
+  uint16_t offset=25;   //没招了 不知道为什么y给到30以下反而会站的更高了，于是只能最低给到30，加个offset让它蹲低一点 offset=20
   servoLeftFront =   betaLeftToAngle-offset;
   servoLeftRear =   alphaLeftToAngle+offset;
   servoRightFront = 180 - betaRightToAngle+offset;

@@ -251,7 +251,6 @@ void DFOC_Vbus(float power_supply)
 
   //PID 加载
   vel_loop_M0 = PIDController{.P = 2, .I = 0, .D = 0, .ramp = 100000, .limit = voltage_power_supply/2};
-  vel_loop_M1 = PIDController{.P = 2, .I = 0, .D = 0, .ramp = 100000, .limit = voltage_power_supply/2};
   //初始化电流传感器
   CS_M0.init();
   CS_M1.init();
@@ -359,7 +358,7 @@ String serialReceiveUserCommand() {
 
   while (Serial1.available()) {
     // get the new byte:
-    char inChar = (char)Serial1.read();
+    char inChar = (char)Serial.read();
     // add it to the string buffer:
     received_chars += inChar;
 

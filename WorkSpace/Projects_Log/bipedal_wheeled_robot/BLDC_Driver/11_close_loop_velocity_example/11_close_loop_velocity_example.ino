@@ -26,7 +26,7 @@ InlineCurrentSense current_sense1 = InlineCurrentSense(0.01, 50.0, 39, 36);
 InlineCurrentSense current_sense2 = InlineCurrentSense(0.01, 50.0, 35, 34);
 
 // commander通信实例
-Commander command = Commander(Serial1);
+Commander command = Commander(Serial);
 void doMotor1(char* cmd) {
   command.motor(&motor1, cmd);
 }
@@ -63,8 +63,8 @@ void setup() {
   motor2.linkDriver(&driver2);
 
   // 电流限制
-  motor1.current_limit = 1;
-  motor2.current_limit = 1;
+  motor1.current_limit = 2;
+  motor2.current_limit = 2;
 
   // 电压限制
   motor1.voltage_limit = get_vin_Volt();

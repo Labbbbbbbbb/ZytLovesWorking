@@ -27,7 +27,7 @@ float PIDController::operator() (float error){
     float proportional = P * error;
     // Tustin 散点积分（I环）
     float integral = integral_prev + I*Ts*0.5f*(error + error_prev);
-    integral = _constrain(integral, -limit*0.6, limit*0.6); //debug
+    integral = _constrain(integral, -limit*0.6, limit*0.6);
     // D环（微分环节）
     float derivative = D*(error - error_prev)/Ts;
 

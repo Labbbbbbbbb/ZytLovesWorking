@@ -1,5 +1,5 @@
 #include "jy901s.h"
-//#include "io_retargetToUart.h"
+#include "bldc.h"
 
 float fAcc[3], fGyro[3], fAngle[3],fYaw;
 
@@ -124,5 +124,11 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
   {
       WitSerialDataIn(ucRxData);
       UART_Start_Receive_IT(huart, &ucRxData, 1);
+  }
+  if(huart->Instance==USART2)
+  {
+	  // BLDC Decoder Data Processing can be added here
+	  parse_uart_data();
+	  HAL_UART_Receive_IT(huart, (uint8_t *)bldc_rxdata, 1);
   }
 }

@@ -63,7 +63,7 @@ void SystemClock_Config(void);
 
 PUTCHAR_PROTOTYPE
 {
-    HAL_UART_Transmit(&huart2, (uint8_t *)&ch, 1, 100);
+    HAL_UART_Transmit(&huart3, (uint8_t *)&ch, 1, 100);
     return ch;
 }
 

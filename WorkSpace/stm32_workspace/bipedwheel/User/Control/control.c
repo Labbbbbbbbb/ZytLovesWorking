@@ -1,6 +1,7 @@
 #include "control.h"
 #include "tim.h"
 #include "math.h"
+#include "bldc.h"
 PID_t left_pid,right_pid;
 PID_t angle_pid;
 PID_t gyro_pid;
@@ -29,7 +30,7 @@ void Control_Peripheral_init(void)
   HAL_TIM_Encoder_Start(&htim4,TIM_CHANNEL_1 | TIM_CHANNEL_2);
   __HAL_TIM_SetCounter(&htim3,65536/2);
   __HAL_TIM_SetCounter(&htim4,65536/2);//16bit ARR
-
+  HAL_UART_Receive_IT(BLDC_UART, (uint8_t *)bldc_rxdata, 1);  //BLDC Decoder UART Receive IT
   /*Servo*/
   /*
   *Servo PWM 100Hz , 32bit ARR=100000 , CNT:1us  
@@ -51,7 +52,7 @@ void Control_param_init()
     pid_init(&left_pid, 4, 1, 0.5, 100, 0,20);
     pid_init(&right_pid,4, 1, 0.5, 100, 0,20);
     pid_init(&angle_pid,2, 0, 0.1, 50, 0,15);
-    pid_init(&gyro_pid,0.01, 0.03, 0.0, 55, 0,20);
+    pid_init(&gyro_pid,0.1, 0.03, 0.0, 55, 0,20);
     pid_init(&turn_pid,0.3, 0.1, 0.1, 10, 0,4);
     IK_Param_Init();
 
@@ -97,11 +98,12 @@ void Wheel_Control_Loop()
       vel_left=(int16_t)(gyro_pid.output);   //直立环的输出叠加车身的速度
       vel_right=(int16_t)(gyro_pid.output);
       uint32_t lenth_l=sprintf(bufferl,"B%d\n",-vel_left);
-      HAL_UART_Transmit(&huart3, (uint8_t *)bufferl, lenth_l, 100);
+      HAL_UART_Transmit(BLDC_UART, (uint8_t *)bufferl, lenth_l, 100);
 
       uint32_t lenth_r=sprintf(bufferr,"A%d\n",vel_right);
-      HAL_UART_Transmit(&huart3, (uint8_t *)bufferr, lenth_r, 100);
-      printf("%.2f,%.2f,%.2f,%.2f\n",(float)vel_left,(float)vel_right,angle_pid.output,gyro_pid.output);
+      HAL_UART_Transmit(BLDC_UART, (uint8_t *)bufferr, lenth_r, 100);
+      //HAL_Delay(8);
+      printf("%.2f,%.2f,%.2f,%.2f,%.2f,%.2f\n",(float)vel_left,(float)vel_right,angle_pid.output,gyro_pid.output, bldc_msg[0], bldc_msg[2]);
 
     /***********PID_CONTROL************/
 

@@ -49,10 +49,17 @@ void Control_Peripheral_init(void)
 
 void Control_param_init()
 {
+    // pid_init(&left_pid, 4, 1, 0.5, 100, 0,20);
+    // pid_init(&right_pid,4, 1, 0.5, 100, 0,20);
+    // pid_init(&angle_pid,1.5, 0, 0.1 , 40, 0,15);
+    // pid_init(&gyro_pid,0.5, 0.2 , 0.0, 55, 0,20);
+    // pid_init(&turn_pid,0.3, 0.1, 0.1, 10, 0,4);
+
+    //with higher current level
     pid_init(&left_pid, 4, 1, 0.5, 100, 0,20);
     pid_init(&right_pid,4, 1, 0.5, 100, 0,20);
-    pid_init(&angle_pid,2, 0, 0.1, 50, 0,15);
-    pid_init(&gyro_pid,0.1, 0.03, 0.0, 55, 0,20);
+    pid_init(&angle_pid,1.0, 0, 0.05 , 40, 0,15);
+    pid_init(&gyro_pid,0.3, 0.1 , 0.0, 50, 0,20);
     pid_init(&turn_pid,0.3, 0.1, 0.1, 10, 0,4);
     IK_Param_Init();
 
@@ -103,7 +110,8 @@ void Wheel_Control_Loop()
       uint32_t lenth_r=sprintf(bufferr,"A%d\n",vel_right);
       HAL_UART_Transmit(BLDC_UART, (uint8_t *)bufferr, lenth_r, 100);
       //HAL_Delay(8);
-      printf("%.2f,%.2f,%.2f,%.2f,%.2f,%.2f\n",(float)vel_left,(float)vel_right,angle_pid.output,gyro_pid.output, bldc_msg[0], bldc_msg[2]);
+      //printf("%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f\n",(float)vel_left,(float)vel_right,angle_pid.output,fGyro[0],gyro_pid.output, bldc_msg[0], bldc_msg[2]);
+      printf("%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f\n",(float)vel_left,(float)vel_left,(float)vel_right,-bldc_msg[1],bldc_msg[3], bldc_msg[0], bldc_msg[2],fAngle[1]);
 
     /***********PID_CONTROL************/
 
@@ -193,7 +201,7 @@ void Servo_IK_Control(float height)
   // servoLeftRear = 90 + alphaLeftToAngle;
   // servoRightFront = 270 - betaRightToAngle;
   // servoRightRear = 270 - alphaRightToAngle;
-  uint16_t offset=25;   //没招了 不知道为什么y给到30以下反而会站的更高了，于是只能最低给到30，加个offset让它蹲低一点 offset=20
+  uint16_t offset=30;   //没招了 不知道为什么y给到30以下反而会站的更高了，于是只能最低给到30，加个offset让它蹲低一点 offset=20
   servoLeftFront =   betaLeftToAngle-offset;
   servoLeftRear =   alphaLeftToAngle+offset;
   servoRightFront = 180 - betaRightToAngle+offset;

@@ -56,10 +56,10 @@ void Control_param_init()
     // pid_init(&turn_pid,0.3, 0.1, 0.1, 10, 0,4);
 
     //with higher current level
-    pid_init(&left_pid, 4, 1, 0.5, 100, 0,20);
-    pid_init(&right_pid,4, 1, 0.5, 100, 0,20);
-    pid_init(&angle_pid,1.0, 0, 0.05 , 40, 0,15);
-    pid_init(&gyro_pid,0.3, 0.1 , 0.0, 50, 0,20);
+    pid_init(&left_pid, 5, 1, 0.5, 100, 0,20);    //问题：角度环抖？死区大小？需要滤波吗？
+    pid_init(&right_pid,5, 1, 0.5, 100, 0,20);
+    pid_init(&angle_pid,0.8, 0, 0.4 , 40, 0,15);  //感觉d就是阻尼作用  会让电机在加速度大的时候瞬间有反映
+    pid_init(&gyro_pid,0.5, 0.2 , 0.0, 55, 0,20);
     pid_init(&turn_pid,0.3, 0.1, 0.1, 10, 0,4);
     IK_Param_Init();
 
@@ -73,7 +73,7 @@ void Angle_Control_Loop()
     angle_pid.ref=0;
     angle_pid.fdb=fAngle[0];
     PID_Calc_P(&angle_pid);
-   if(fAngle[0]>-4&&fAngle[0]<4)  //dead band
+   if(fAngle[0]>-8&&fAngle[0]<8)  //dead band
    {
        angle_pid.output=0;
    }
@@ -111,7 +111,7 @@ void Wheel_Control_Loop()
       HAL_UART_Transmit(BLDC_UART, (uint8_t *)bufferr, lenth_r, 100);
       //HAL_Delay(8);
       //printf("%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f\n",(float)vel_left,(float)vel_right,angle_pid.output,fGyro[0],gyro_pid.output, bldc_msg[0], bldc_msg[2]);
-      printf("%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f\n",(float)vel_left,(float)vel_left,(float)vel_right,-bldc_msg[1],bldc_msg[3], bldc_msg[0], bldc_msg[2],fAngle[1]);
+      printf("%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f\n",(float)vel_left,(float)vel_right,angle_pid.output,fGyro[0],-bldc_msg[1],bldc_msg[3], bldc_msg[0], bldc_msg[2]);
 
     /***********PID_CONTROL************/
 
@@ -140,9 +140,9 @@ void IK_Param_Init(void)
 
 void Servo_IK_Control(float height)
 {
-    IKParam.XLeft=25;//30
+    IKParam.XLeft=L5/2;//30
     IKParam.YLeft=height;
-    IKParam.XRight=25;
+    IKParam.XRight=L5/2;
     IKParam.YRight=height;
 
   float alpha1,alpha2,beta1,beta2;
@@ -201,11 +201,12 @@ void Servo_IK_Control(float height)
   // servoLeftRear = 90 + alphaLeftToAngle;
   // servoRightFront = 270 - betaRightToAngle;
   // servoRightRear = 270 - alphaRightToAngle;
-  uint16_t offset=30;   //没招了 不知道为什么y给到30以下反而会站的更高了，于是只能最低给到30，加个offset让它蹲低一点 offset=20
-  servoLeftFront =   betaLeftToAngle-offset;
-  servoLeftRear =   alphaLeftToAngle+offset;
-  servoRightFront = 180 - betaRightToAngle+offset;
-  servoRightRear = 180 - alphaRightToAngle-offset;
+  uint16_t offset=25;   //没招了 不知道为什么y给到30以下反而会站的更高了，于是只能最低给到30，加个offset让它蹲低一点 offset=20
+  uint16_t offset0=90;   //加这个是因为为防止初始角度小于脉宽500所在的位置把零点前移了九十度
+  servoLeftFront =   betaLeftToAngle-offset+offset0;
+  servoLeftRear =   alphaLeftToAngle+offset+offset0;
+  servoRightFront = 180 - betaRightToAngle+offset+offset0;
+  servoRightRear = 180 - alphaRightToAngle-offset+offset0;
    int ch1=(int)(servoLeftFront/300.0*2000+500);        //待验证
    int ch2=(int)(servoLeftRear/300.0*2000+500);
    int ch3=(int)(servoRightFront/300.0*2000+500);

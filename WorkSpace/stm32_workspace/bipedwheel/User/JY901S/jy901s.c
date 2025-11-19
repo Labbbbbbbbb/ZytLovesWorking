@@ -125,7 +125,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
       WitSerialDataIn(ucRxData);
       UART_Start_Receive_IT(huart, &ucRxData, 1);
   }
-  if(huart->Instance==USART2)
+  if(huart->Instance==USART3)
   {
 	  // BLDC Decoder Data Processing can be added here
 	  parse_uart_data();

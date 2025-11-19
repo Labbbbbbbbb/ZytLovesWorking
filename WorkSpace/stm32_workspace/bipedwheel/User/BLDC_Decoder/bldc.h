@@ -6,7 +6,7 @@
 #include "string.h"
 #include "stdlib.h"
 #include "stdio.h"
-#define BLDC_UART &huart2
+#define BLDC_UART &huart3
 
 extern uint8_t bldc_rxdata[1];
 extern float bldc_msg[4];

@@ -44,15 +44,15 @@ void loop()
 
   //位置-速度-力（加入电流环后）
   //DFOC_M0_SET_ANGLE_PID(1,0,0,100000,30);
-  DFOC_M0_SET_VEL_PID(0.002,0.01,0,10000,0.5);
-  DFOC_M0_SET_CURRENT_PID(4,2,0,100000);   //5,200
+  DFOC_M0_SET_VEL_PID(0.009,0.03,0,10000,0.5); //0.002，0.01
+  DFOC_M0_SET_CURRENT_PID(7,2.0,0,100000);   //4，2
   //DFOC_M0_set_Velocity_Angle(serial_motor_target());
   DFOC_M0_setVelocity(serial_motor_target(0));
 
   //位置-速度-力（加入电流环后）
   //DFOC_M1_SET_ANGLE_PID(1,0,0,100000,30);
-  DFOC_M1_SET_VEL_PID(0.002,0.01,0,10000,0.5);
-  DFOC_M1_SET_CURRENT_PID(4,2,0,100000);
+  DFOC_M1_SET_VEL_PID(0.009,0.03,0,10000,0.5);
+  DFOC_M1_SET_CURRENT_PID(7,2.0,0,100000);  //感觉电机的电流跟随能力还是比较一般。。。
   //DFOC_M1_set_Velocity_Angle(serial_motor_target());
   DFOC_M1_setVelocity(serial_motor_target(1));
   

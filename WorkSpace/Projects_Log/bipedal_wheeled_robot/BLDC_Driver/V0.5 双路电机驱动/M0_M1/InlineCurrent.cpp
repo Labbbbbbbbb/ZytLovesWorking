@@ -31,8 +31,8 @@ CurrSense::CurrSense(int Mot_Num)
     volts_to_amps_ratio = 1.0f /_shunt_resistor / amp_gain; // volts to amps
     
     // DengFOC V3P
-     gain_a = volts_to_amps_ratio*-1;
-     gain_b = volts_to_amps_ratio*-1;
+     gain_a = volts_to_amps_ratio;
+     gain_b = volts_to_amps_ratio;
      
     // DengFOC V4
 //    gain_a = volts_to_amps_ratio;
@@ -52,8 +52,8 @@ CurrSense::CurrSense(int Mot_Num)
     volts_to_amps_ratio = 1.0f /_shunt_resistor / amp_gain; // volts to amps
     
     // DengFOC V3P
-     gain_a = volts_to_amps_ratio*-1;
-     gain_b = volts_to_amps_ratio*-1;
+     gain_a = volts_to_amps_ratio;
+     gain_b = volts_to_amps_ratio;
      
     // DengFOC V4
 //    gain_a = volts_to_amps_ratio;

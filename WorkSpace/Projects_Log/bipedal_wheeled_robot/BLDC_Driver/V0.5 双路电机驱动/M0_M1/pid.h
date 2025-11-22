@@ -14,10 +14,11 @@ public:
     float D; //!< 微分增益（D环增益）
     float output_ramp; 
     float limit; 
+    float integral_prev; //!< 最后一个积分分量值
 protected:
     float error_prev; //!< 最后的跟踪误差值
     float output_prev;  //!< 最后一个 pid 输出值
-    float integral_prev; //!< 最后一个积分分量值
+    // float integral_prev; //!< 最后一个积分分量值
     unsigned long timestamp_prev; //!< 上次执行时间戳
 };
 

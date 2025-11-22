@@ -4,6 +4,7 @@
 //仅在DengFOC官方硬件上测试过，欢迎硬件购买/支持作者，淘宝搜索店铺：灯哥开源
 //你的支持将是接下来做视频和持续开源的经费，灯哥在这里先谢谢大家了
 //函数声明
+#include "pid.h"
 
 extern float debug;
 void M0_setPwm(float Ua, float Ub, float Uc);
@@ -39,7 +40,8 @@ float DFOC_M0_VEL_PID(float error);
 float DFOC_M0_ANGLE_PID(float error);
 float DFOC_M1_VEL_PID(float error);
 float DFOC_M1_ANGLE_PID(float error);
-
+extern float M0_output;
+extern PIDController current_loop_M0;
 //接口函数
 void DFOC_M0_set_Velocity_Angle(float Target);
 void DFOC_M0_setVelocity(float Target);

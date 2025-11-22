@@ -56,12 +56,19 @@ void Control_param_init()
     // pid_init(&turn_pid,0.3, 0.1, 0.1, 10, 0,4);
 
     //with higher current level
-    pid_init(&left_pid, 5, 1, 0.5, 100, 0,20);    //问题：角度环抖？死区大小？需要滤波吗？
-    pid_init(&right_pid,5, 1, 0.5, 100, 0,20);
-    pid_init(&angle_pid,0.8, 0, 0.4 , 40, 0,15);  //感觉d就是阻尼作用  会让电机在加速度大的时候瞬间有反映
-    pid_init(&gyro_pid,0.5, 0.2 , 0.0, 55, 0,20);
+    pid_init(&left_pid, 5, 1, 0.5, 100, 0,20);    //
+    pid_init(&right_pid,5, 1, 0.5, 100, 0,20);    
+    pid_init(&angle_pid,36, 1, 10.0, 1000, 0,15);     //66 3.6 10  1000增量式 offset=25
+    pid_init(&gyro_pid,0.01, 0.03 , 0.03, 65, 0,20);  //0.01 0.03 0.03 位置式 offset=25
     pid_init(&turn_pid,0.3, 0.1, 0.1, 10, 0,4);
     IK_Param_Init();
+
+    /*
+    问题：我的d环怎么死掉了  必须得加上i才能用 但是这样会有积分累积现象且容易疯转
+    而且问题是它纯靠p的话总开始有一点点倾斜并且程度会积累直到翻车，但是p再增大的话又会震荡
+    而且d又不好用得离谱
+    现在打算把offset=55的30作为基准来调pid  再看需不需要随着高度改变的pid
+    */
 
 }
 
@@ -72,11 +79,11 @@ void Angle_Control_Loop()
     /***********ANGLE&GYRO_PID_CONTROL************/
     angle_pid.ref=0;
     angle_pid.fdb=fAngle[0];
-    PID_Calc_P(&angle_pid);
-   if(fAngle[0]>-8&&fAngle[0]<8)  //dead band
-   {
-       angle_pid.output=0;
-   }
+    PID_Calc(&angle_pid);
+   //if(fAngle[0]>-1&&fAngle[0]<1)  //dead band
+   //{
+    //   angle_pid.output=0;
+   //}
    gyro_pid.ref=angle_pid.output;   //Gyro_Loop
    gyro_pid.fdb=fGyro[0];
    PID_Calc_P(&gyro_pid);
@@ -201,7 +208,7 @@ void Servo_IK_Control(float height)
   // servoLeftRear = 90 + alphaLeftToAngle;
   // servoRightFront = 270 - betaRightToAngle;
   // servoRightRear = 270 - alphaRightToAngle;
-  uint16_t offset=25;   //没招了 不知道为什么y给到30以下反而会站的更高了，于是只能最低给到30，加个offset让它蹲低一点 offset=20
+  uint16_t offset=55;   //没招了 不知道为什么y给到30以下反而会站的更高了，于是只能最低给到30，加个offset让它蹲低一点 offset=55可以折叠到最矮
   uint16_t offset0=90;   //加这个是因为为防止初始角度小于脉宽500所在的位置把零点前移了九十度
   servoLeftFront =   betaLeftToAngle-offset+offset0;
   servoLeftRear =   alphaLeftToAngle+offset+offset0;

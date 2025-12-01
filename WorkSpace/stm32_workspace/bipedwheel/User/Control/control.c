@@ -6,6 +6,7 @@ PID_t left_pid,right_pid;
 PID_t angle_pid;
 PID_t gyro_pid;
 PID_t turn_pid;
+PID_t roll_pid;
 
 
 int16_t left_cnt;  
@@ -58,15 +59,16 @@ void Control_param_init()
     //with higher current level
     pid_init(&left_pid, 5, 1, 0.5, 100, 0,20);    //
     pid_init(&right_pid,5, 1, 0.5, 100, 0,20);    
-    pid_init(&angle_pid,36, 1, 10.0, 1000, 0,15);     //66 3.6 10  1000增量式 offset=25
+    pid_init(&angle_pid,30, 1, 10.0, 1000, 0,15);     //66 3.6 10  1000增量式 offset=25
     pid_init(&gyro_pid,0.01, 0.03 , 0.03, 65, 0,20);  //0.01 0.03 0.03 位置式 offset=25
     pid_init(&turn_pid,0.3, 0.1, 0.1, 10, 0,4);
+    pid_init(&roll_pid,2, 1, 0.1, 100, 0,50);
     IK_Param_Init();
 
     /*
     问题：我的d环怎么死掉了  必须得加上i才能用 但是这样会有积分累积现象且容易疯转
     而且问题是它纯靠p的话总开始有一点点倾斜并且程度会积累直到翻车，但是p再增大的话又会震荡
-    而且d又不好用得离谱
+    而且d又不好用得离谱  可以再去看一下b站那两个调参视频
     现在打算把offset=55的30作为基准来调pid  再看需不需要随着高度改变的pid
     */
 
@@ -118,7 +120,7 @@ void Wheel_Control_Loop()
       HAL_UART_Transmit(BLDC_UART, (uint8_t *)bufferr, lenth_r, 100);
       //HAL_Delay(8);
       //printf("%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f\n",(float)vel_left,(float)vel_right,angle_pid.output,fGyro[0],gyro_pid.output, bldc_msg[0], bldc_msg[2]);
-      printf("%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f\n",(float)vel_left,(float)vel_right,angle_pid.output,fGyro[0],-bldc_msg[1],bldc_msg[3], bldc_msg[0], bldc_msg[2]);
+      printf("%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f\n",(float)vel_left,(float)fAngle[0],angle_pid.output,fGyro[0],-bldc_msg[1],bldc_msg[3], bldc_msg[0], bldc_msg[2]);
 
     /***********PID_CONTROL************/
 
@@ -145,7 +147,7 @@ void IK_Param_Init(void)
     L5=45;
 }
 
-void Servo_IK_Control(float height)
+void Servo_IK_Control(uint8_t index,float height)
 {
     IKParam.XLeft=L5/2;//30
     IKParam.YLeft=height;
@@ -208,7 +210,7 @@ void Servo_IK_Control(float height)
   // servoLeftRear = 90 + alphaLeftToAngle;
   // servoRightFront = 270 - betaRightToAngle;
   // servoRightRear = 270 - alphaRightToAngle;
-  uint16_t offset=55;   //没招了 不知道为什么y给到30以下反而会站的更高了，于是只能最低给到30，加个offset让它蹲低一点 offset=55可以折叠到最矮
+  uint16_t offset=35;   //没招了 不知道为什么y给到30以下反而会站的更高了，于是只能最低给到30，加个offset让它蹲低一点 offset=55可以折叠到最矮
   uint16_t offset0=90;   //加这个是因为为防止初始角度小于脉宽500所在的位置把零点前移了九十度
   servoLeftFront =   betaLeftToAngle-offset+offset0;
   servoLeftRear =   alphaLeftToAngle+offset+offset0;
@@ -219,11 +221,17 @@ void Servo_IK_Control(float height)
    int ch3=(int)(servoRightFront/300.0*2000+500);
    int ch4=(int)(servoRightRear/300.0*2000+500);
    if(ch1>=500&&ch1<=2500&&ch2>=500&&ch2<=2500&&ch3>=500&&ch3<=2500&&ch4>=500&&ch4<=2500){
+    if(index==LEFT)
+    {
     __HAL_TIM_SET_COMPARE(&htim5, TIM_CHANNEL_1, ch1);
     __HAL_TIM_SET_COMPARE(&htim5, TIM_CHANNEL_2, ch2);
+    }
+    else if(index==RIGHT)
+    {
     __HAL_TIM_SET_COMPARE(&htim5, TIM_CHANNEL_3, ch3);
     __HAL_TIM_SET_COMPARE(&htim5, TIM_CHANNEL_4, ch4);
    }
+  }
 }
 //安装方法：
 //先运行setcompare(500），然后装四个单向舵盘朝前方
@@ -232,3 +240,39 @@ void Servo_IK_Control(float height)
 //此时机械顺着这个角度安装腿部即可
 
 //https://gitee.com/StackForce/bipedal_wheeled_robot/blob/master/%E8%AF%BE%E7%A8%8B%E4%BB%A3%E7%A0%81/%E7%AC%AC%E5%85%AD%E8%AF%BE_%E8%BF%90%E5%8A%A8%E5%AD%A6%E9%80%86%E8%A7%A3/lesson6_HeightCtrl/src/main.cpp
+
+void Roll_Control_Loop()
+{
+    // float roll=fAngle[1]*2.0f;
+    // if(roll<100&&roll>=0)
+    // {
+    //  Servo_IK_Control(LEFT,30.0f); //范围30-130
+    //   Servo_IK_Control(RIGHT,30.0f+roll); //范围30-130
+    // }else if(roll<0&&roll>=-100)
+    // {
+    //  Servo_IK_Control(RIGHT,30.0f); //范围30-130
+    //   Servo_IK_Control(LEFT,30.0f+roll); //范围30-130
+    // }
+    // else if (roll>=100)
+    // {
+    //  Servo_IK_Control(RIGHT,130.0f); //范围30-130
+    //  Servo_IK_Control(LEFT,30.0f); //范围30-130
+    // }
+    // else if (roll<-100)
+    // {
+    //  Servo_IK_Control(LEFT,130.0f); //范围30-130
+    //  Servo_IK_Control(RIGHT,30.0f); //范围30-130
+    // }
+    roll_pid.ref=0;
+    roll_pid.fdb=fAngle[1];
+    PID_Calc_P(&roll_pid);
+    if(roll_pid.output>0)
+    {
+     Servo_IK_Control(LEFT,30.0f+roll_pid.output); //范围30-130
+     Servo_IK_Control(RIGHT,30.0f); //范围30-130
+    }else
+    {
+      Servo_IK_Control(RIGHT,30.0f-roll_pid.output); //范围30-130
+      Servo_IK_Control(LEFT,30.0f); //范围30-130
+      }
+}

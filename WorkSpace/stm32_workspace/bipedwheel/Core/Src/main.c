@@ -122,7 +122,7 @@ int main(void)
     //   HAL_Delay(1);
     // }
     // __HAL_TIM_SetCompare(&htim2,TIM_CHANNEL_1,1500);
-    // __HAL_TIM_SetCompare(&htim5,TIM_CHANNEL_1,1500);
+   //__HAL_TIM_SetCompare(&htim5,TIM_CHANNEL_1,1500);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -145,13 +145,11 @@ int main(void)
     //   HAL_Delay(50);
     // }
     //   HAL_Delay(1000);
-     Servo_IK_Control(30.0f); //范围30-130
-
+    Roll_Control_Loop();
     /***********WHEEL_VELOCITY_PID_CONTROL************/
     if(tim_elapsed)
     {
       Wheel_Control_Loop();
-      //printf("fangle %f,%d,%d\n",fAngle[0],vel_left,vel_right);
 		  tim_elapsed=0;
     }
     /* USER CODE END WHILE */

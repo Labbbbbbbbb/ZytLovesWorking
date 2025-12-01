@@ -5,6 +5,8 @@
 #include "wtr_calculate.h"
 #include "jy901s.h"
 
+#define LEFT 0
+#define RIGHT 1
 typedef struct{
     float alphaLeft, betaLeft;
     float alphaRight, betaRight;
@@ -22,9 +24,9 @@ void Control_Peripheral_init(void);
 void Control_param_init(void);
 void Angle_Control_Loop(void);
 void Wheel_Control_Loop(void);
-void Servo_IK_Control(float height);
+void Servo_IK_Control(uint8_t index,float height);
 void IK_Param_Init(void);
-
+void Roll_Control_Loop(void);
 void Velocity_Control_Loop(float forward,float turn);
 
 #endif

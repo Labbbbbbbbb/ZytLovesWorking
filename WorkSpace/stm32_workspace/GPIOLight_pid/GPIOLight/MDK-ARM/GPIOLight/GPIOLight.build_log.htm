@@ -1,0 +1,185 @@
+<html>
+<body>
+<pre>
+<h1>µVision Build Log</h1>
+<h2>Tool Versions:</h2>
+IDE-Version: ¦ÌVision V5.39.0.0
+Copyright (C) 2023 ARM Ltd and ARM Germany GmbH. All rights reserved.
+License Information: z zyt, z, LIC=585FJ-UZ1JK-Z9SG9-4K0UY-HGE98-JY7F6
+ 
+Tool Versions:
+Toolchain:       MDK-ARM Plus  Version: 5.39.0.0
+Toolchain Path:  F:\ProgramFile\Keil_v5_39\ARM\ARMCLANG\Bin
+C Compiler:      ArmClang.exe V6.21
+Assembler:       Armasm.exe V6.21
+Linker/Locator:  ArmLink.exe V6.21
+Library Manager: ArmAr.exe V6.21
+Hex Converter:   FromElf.exe V6.21
+CPU DLL:         SARMCM3.DLL V5.39.0.0
+Dialog DLL:      DCM.DLL V1.17.5.0
+Target DLL:      STLink\ST-LINKIII-KEIL_SWO.dll V3.2.0.0
+Dialog DLL:      TCM.DLL V1.56.4.0
+ 
+<h2>Project:</h2>
+F:\ITS_Log\WorkSpace\stm32_workspace\GPIOLight(1)\GPIOLight\MDK-ARM\GPIOLight.uvprojx
+Project File Date:  12/07/2025
+
+<h2>Output:</h2>
+*** Using Compiler 'V6.21', folder: 'F:\ProgramFile\Keil_v5_39\ARM\ARMCLANG\Bin'
+Build target 'GPIOLight'
+../Core/Src/usart.c(21): warning: In file included from...
+../Core/Inc\usart.h(29): warning: In file included from...
+../Core/Inc/main.h(30): error: 'stm32f4xx_hal.h' file not found
+   30 | #include "stm32f4xx_hal.h"
+      |          ^~~~~~~~~~~~~~~~~
+1 error generated.
+compiling usart.c...
+../Core/Src/tim.c(21): warning: In file included from...
+../Core/Inc\tim.h(29): warning: In file included from...
+../Core/Inc/main.h(30): error: 'stm32f4xx_hal.h' file not found
+   30 | #include "stm32f4xx_hal.h"
+      |          ^~~~~~~~~~~~~~~~~
+1 error generated.
+compiling tim.c...
+../Core/Src/stm32f4xx_it.c(21): warning: In file included from...
+../Core/Inc\main.h(30): error: 'stm32f4xx_hal.h' file not found
+   30 | #include "stm32f4xx_hal.h"
+      |          ^~~~~~~~~~~~~~~~~
+1 error generated.
+compiling stm32f4xx_it.c...
+ArmClang: error: no such file or directory: 'C:/Users/86189/STM32Cube/Repository/STM32Cube_FW_F4_V1.27.1/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_ll_adc.c'
+ArmClang: error: no input files
+compiling stm32f4xx_ll_adc.c...
+ArmClang: error: no such file or directory: 'C:/Users/86189/STM32Cube/Repository/STM32Cube_FW_F4_V1.27.1/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_adc_ex.c'
+ArmClang: error: no input files
+compiling stm32f4xx_hal_adc_ex.c...
+../Core/Src/main.c(20): warning: In file included from...
+../Core/Inc\main.h(30): error: 'stm32f4xx_hal.h' file not found
+   30 | #include "stm32f4xx_hal.h"
+      |          ^~~~~~~~~~~~~~~~~
+1 error generated.
+compiling main.c...
+../Core/Src/gpio.c(22): warning: In file included from...
+../Core/Inc\gpio.h(29): warning: In file included from...
+../Core/Inc/main.h(30): error: 'stm32f4xx_hal.h' file not found
+   30 | #include "stm32f4xx_hal.h"
+      |          ^~~~~~~~~~~~~~~~~
+1 error generated.
+compiling gpio.c...
+ArmClang: error: no such file or directory: 'C:/Users/86189/STM32Cube/Repository/STM32Cube_FW_F4_V1.27.1/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash_ex.c'
+ArmClang: error: no input files
+compiling stm32f4xx_hal_flash_ex.c...
+ArmClang: error: no such file or directory: 'C:/Users/86189/STM32Cube/Repository/STM32Cube_FW_F4_V1.27.1/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_dma_ex.c'
+ArmClang: error: no input files
+compiling stm32f4xx_hal_dma_ex.c...
+ArmClang: error: no such file or directory: 'C:/Users/86189/STM32Cube/Repository/STM32Cube_FW_F4_V1.27.1/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rcc_ex.c'
+ArmClang: error: no input files
+compiling stm32f4xx_hal_rcc_ex.c...
+ArmClang: error: no such file or directory: 'C:/Users/86189/STM32Cube/Repository/STM32Cube_FW_F4_V1.27.1/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_dma.c'
+ArmClang: error: no input files
+compiling stm32f4xx_hal_dma.c...
+ArmClang: error: no such file or directory: 'C:/Users/86189/STM32Cube/Repository/STM32Cube_FW_F4_V1.27.1/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_pwr.c'
+ArmClang: error: no input files
+compiling stm32f4xx_hal_pwr.c...
+ArmClang: error: no such file or directory: 'C:/Users/86189/STM32Cube/Repository/STM32Cube_FW_F4_V1.27.1/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_adc.c'
+ArmClang: error: no input files
+compiling stm32f4xx_hal_adc.c...
+ArmClang: error: no such file or directory: 'C:/Users/86189/STM32Cube/Repository/STM32Cube_FW_F4_V1.27.1/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_gpio.c'
+ArmClang: error: no input files
+compiling stm32f4xx_hal_gpio.c...
+../Core/Src/adc.c(21): warning: In file included from...
+../Core/Inc\adc.h(29): warning: In file included from...
+../Core/Inc/main.h(30): error: 'stm32f4xx_hal.h' file not found
+   30 | #include "stm32f4xx_hal.h"
+      |          ^~~~~~~~~~~~~~~~~
+1 error generated.
+compiling adc.c...
+../Core/Src/dma.c(22): warning: In file included from...
+../Core/Inc\dma.h(29): warning: In file included from...
+../Core/Inc/main.h(30): error: 'stm32f4xx_hal.h' file not found
+   30 | #include "stm32f4xx_hal.h"
+      |          ^~~~~~~~~~~~~~~~~
+1 error generated.
+compiling dma.c...
+ArmClang: error: no such file or directory: 'C:/Users/86189/STM32Cube/Repository/STM32Cube_FW_F4_V1.27.1/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash_ramfunc.c'
+ArmClang: error: no input files
+compiling stm32f4xx_hal_flash_ramfunc.c...
+ArmClang: error: no such file or directory: 'C:/Users/86189/STM32Cube/Repository/STM32Cube_FW_F4_V1.27.1/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rcc.c'
+ArmClang: error: no input files
+compiling stm32f4xx_hal_rcc.c...
+ArmClang: error: no such file or directory: 'C:/Users/86189/STM32Cube/Repository/STM32Cube_FW_F4_V1.27.1/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash.c'
+ArmClang: error: no input files
+compiling stm32f4xx_hal_flash.c...
+ArmClang: error: no such file or directory: 'C:/Users/86189/STM32Cube/Repository/STM32Cube_FW_F4_V1.27.1/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_pwr_ex.c'
+ArmClang: error: no input files
+compiling stm32f4xx_hal_pwr_ex.c...
+../Core/Src/stm32f4xx_hal_msp.c(22): warning: In file included from...
+../Core/Inc\main.h(30): error: 'stm32f4xx_hal.h' file not found
+   30 | #include "stm32f4xx_hal.h"
+      |          ^~~~~~~~~~~~~~~~~
+1 error generated.
+compiling stm32f4xx_hal_msp.c...
+ArmClang: error: no such file or directory: 'C:/Users/86189/STM32Cube/Repository/STM32Cube_FW_F4_V1.27.1/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_cortex.c'
+ArmClang: error: no input files
+compiling stm32f4xx_hal_cortex.c...
+ArmClang: error: no such file or directory: 'C:/Users/86189/STM32Cube/Repository/STM32Cube_FW_F4_V1.27.1/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal.c'
+ArmClang: error: no input files
+compiling stm32f4xx_hal.c...
+ArmClang: error: no such file or directory: 'C:/Users/86189/STM32Cube/Repository/STM32Cube_FW_F4_V1.27.1/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_exti.c'
+ArmClang: error: no input files
+compiling stm32f4xx_hal_exti.c...
+ArmClang: error: no such file or directory: 'C:/Users/86189/STM32Cube/Repository/STM32Cube_FW_F4_V1.27.1/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim_ex.c'
+ArmClang: error: no input files
+compiling stm32f4xx_hal_tim_ex.c...
+ArmClang: error: no such file or directory: 'C:/Users/86189/STM32Cube/Repository/STM32Cube_FW_F4_V1.27.1/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim.c'
+ArmClang: error: no input files
+compiling stm32f4xx_hal_tim.c...
+ArmClang: error: no such file or directory: 'C:/Users/86189/STM32Cube/Repository/STM32Cube_FW_F4_V1.27.1/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_uart.c'
+ArmClang: error: no input files
+compiling stm32f4xx_hal_uart.c...
+../Core/Src/system_stm32f4xx.c(48): error: 'stm32f4xx.h' file not found
+   48 | #include "stm32f4xx.h"
+      |          ^~~~~~~~~~~~~
+1 error generated.
+compiling system_stm32f4xx.c...
+../User/wtr_calculate.c(10): warning: In file included from...
+../User/wtr_calculate.h(15): warning: In file included from...
+../Core/Inc\main.h(30): error: 'stm32f4xx_hal.h' file not found
+   30 | #include "stm32f4xx_hal.h"
+      |          ^~~~~~~~~~~~~~~~~
+1 error generated.
+compiling wtr_calculate.c...
+../User/stm32_2.8_lcd.c(23): warning: In file included from...
+../User/stm32_2.8_lcd.h(30): error: 'stm32f4xx_hal.h' file not found
+   30 | #include "stm32f4xx_hal.h"
+      |          ^~~~~~~~~~~~~~~~~
+1 error generated.
+compiling stm32_2.8_lcd.c...
+"GPIOLight\GPIOLight.axf" - 49 Error(s), 0 Warning(s).
+
+<h2>Software Packages used:</h2>
+
+Package Vendor: ARM
+                http://www.keil.com/pack/ARM.CMSIS.5.9.0.pack
+                ARM::CMSIS@5.9.0
+                CMSIS (Common Microcontroller Software Interface Standard)
+   * Component: CORE Version: 5.6.0
+
+Package Vendor: Keil
+                https://www.keil.com/pack/Keil.STM32F4xx_DFP.3.1.0.pack
+                Keil::STM32F4xx_DFP@3.1.0
+                STMicroelectronics STM32F4 Series Device Support
+
+<h2>Collection of Component include folders:</h2>
+  ./RTE/_GPIOLight
+  C:/Users/zyt/AppData/Local/Arm/Packs_5_39/ARM/CMSIS/5.9.0/CMSIS/Core/Include
+
+<h2>Collection of Component Files used:</h2>
+
+   * Component: ARM::CMSIS:CORE@5.6.0
+      Include file:  CMSIS/Core/Include/tz_context.h
+Target not created.
+Build Time Elapsed:  00:00:00
+</pre>
+</body>
+</html>

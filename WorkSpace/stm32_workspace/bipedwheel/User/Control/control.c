@@ -59,7 +59,7 @@ void Control_param_init()
     //with higher current level
     pid_init(&left_pid, 5, 1, 0.5, 100, 0,20);    //
     pid_init(&right_pid,5, 1, 0.5, 100, 0,20);    
-    pid_init(&angle_pid,30, 1, 10.0, 1000, 0,15);     //66 3.6 10  1000增量式 offset=25
+    pid_init(&angle_pid,40, 2.5, 3.0, 1000, 0,15);     //66 3.6 10  1000增量式 offset=25
     pid_init(&gyro_pid,0.01, 0.03 , 0.03, 65, 0,20);  //0.01 0.03 0.03 位置式 offset=25
     pid_init(&turn_pid,0.3, 0.1, 0.1, 10, 0,4);
     pid_init(&roll_pid,2, 1, 0.1, 100, 0,50);

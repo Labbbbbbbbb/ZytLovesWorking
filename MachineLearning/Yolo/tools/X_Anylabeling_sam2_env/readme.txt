@@ -1,0 +1,1 @@
+https://github.com/CVHub520/X-AnyLabeling/blob/main/examples/interactive_video_object_segmentation/README.md

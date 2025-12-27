@@ -141,11 +141,12 @@ int main(void)
     // __HAL_TIM_SetCompare(&htim5,TIM_CHANNEL_3,500);
     // __HAL_TIM_SetCompare(&htim5,TIM_CHANNEL_4,500);
     // for(int i=130;i>=30;i=i-5){
-    //  Servo_IK_Control((float)i); //范围30-130
+    Servo_IK_Control(0,30); //范围30-130
+    Servo_IK_Control(1,30); //范围30-130
     //   HAL_Delay(50);
     // }
     //   HAL_Delay(1000);
-    Roll_Control_Loop();
+    //Roll_Control_Loop();
     /***********WHEEL_VELOCITY_PID_CONTROL************/
     if(tim_elapsed)
     {

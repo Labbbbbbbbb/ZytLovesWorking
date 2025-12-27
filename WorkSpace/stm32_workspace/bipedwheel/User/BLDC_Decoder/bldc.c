@@ -49,6 +49,6 @@ void parse_uart_data(void)
     rx_complete = 0;
 
     // 调试：打印解析结果（可选）
-    printf("M0cur=%.2f, M0vel=%.2f, M1cur=%.2f, M1vel=%.2f\n",
-           bldc_msg[0], bldc_msg[1], bldc_msg[2], bldc_msg[3]);
+    //printf("M0cur=%.2f, M0vel=%.2f, M1cur=%.2f, M1vel=%.2f\n",
+    //       bldc_msg[0], bldc_msg[1], bldc_msg[2], bldc_msg[3]);
 }

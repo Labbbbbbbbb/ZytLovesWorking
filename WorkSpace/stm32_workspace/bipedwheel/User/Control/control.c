@@ -57,11 +57,11 @@ void Control_param_init()
     // pid_init(&turn_pid,0.3, 0.1, 0.1, 10, 0,4);
 
     //with higher current level
-    pid_init(&left_pid, 5, 1, 0.5, 100, 0,20);    //
-    pid_init(&right_pid,5, 1, 0.5, 100, 0,20);    
-    pid_init(&angle_pid,40, 2.5, 3.0, 1000, 0,15);     //66 3.6 10  1000增量式 offset=25
-    pid_init(&gyro_pid,0.01, 0.03 , 0.03, 65, 0,20);  //0.01 0.03 0.03 位置式 offset=25
-    pid_init(&turn_pid,0.3, 0.1, 0.1, 10, 0,4);
+    pid_init(&left_pid, 0.01, 0.0, 0.15, 1, 0,0.5);    //嗯似乎重新装了一遍机械后左右反过来了
+    pid_init(&right_pid,0.01, 0.0, 0.15, 1, 0,0.5);    
+    pid_init(&angle_pid,40, 2.5, 2.5, 1000, 0,15);     //66 3.6 10  1000增量式 offset=25
+    pid_init(&gyro_pid,0.05, 0.04 , 0.03, 65, 0,20);  //0.01 0.03 0.03 位置式 offset=25
+    pid_init(&turn_pid,0.35, 0.1, 0.1, 10, 0,4);
     pid_init(&roll_pid,2, 1, 0.1, 100, 0,50);
     IK_Param_Init();
 
@@ -99,28 +99,38 @@ void Velocity_Control_Loop(float forward,float turn)
     turn_pid.ref=turn;
     turn_pid.fdb=fGyro[2];  //Z轴陀螺仪
     PID_Calc_P(&turn_pid);
-    left_velocity=forward;//+turn_pid.output;
-    right_velocity=forward;//-turn_pid.output;
+    left_velocity=forward+turn_pid.output;
+    right_velocity=forward-turn_pid.output;
 }
 
-  uint8_t  bufferl[10] ;
-  uint8_t  bufferr[10] ;
+  uint8_t  bufferl[16] ;
+  uint8_t  bufferr[16] ;
 
 void Wheel_Control_Loop()
 {
     
-      // vel_left=(int16_t)(gyro_pid.output+left_velocity);   //直立环的输出叠加车身的速度
-      // vel_right=(int16_t)(gyro_pid.output+right_velocity);
+      //vel_left=(int16_t)(gyro_pid.output+left_velocity);   //直立环的输出叠加车身的速度
+      //vel_right=(int16_t)(gyro_pid.output+right_velocity);
+
+
       vel_left=(int16_t)(gyro_pid.output);   //直立环的输出叠加车身的速度
       vel_right=(int16_t)(gyro_pid.output);
-      uint32_t lenth_l=sprintf(bufferl,"B%d\n",-vel_left);
+
+      left_pid.ref=-vel_left;
+      left_pid.fdb=bldc_msg[1];   //BLDC Decoder Speed Feedback
+      PID_Calc_P(&left_pid);
+      right_pid.ref=vel_right;
+      right_pid.fdb=bldc_msg[3]; //BLDC Decoder Speed Feedback
+      PID_Calc_P(&right_pid);
+
+      uint32_t lenth_l=sprintf(bufferl,"B%d\n",(int16_t)(left_pid.output*100));
       HAL_UART_Transmit(BLDC_UART, (uint8_t *)bufferl, lenth_l, 100);
 
-      uint32_t lenth_r=sprintf(bufferr,"A%d\n",vel_right);
+      uint32_t lenth_r=sprintf(bufferr,"A%d\n", (int16_t)(right_pid.output*100));
       HAL_UART_Transmit(BLDC_UART, (uint8_t *)bufferr, lenth_r, 100);
       //HAL_Delay(8);
       //printf("%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f\n",(float)vel_left,(float)vel_right,angle_pid.output,fGyro[0],gyro_pid.output, bldc_msg[0], bldc_msg[2]);
-      printf("%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f\n",(float)vel_left,(float)fAngle[0],angle_pid.output,fGyro[0],-bldc_msg[1],bldc_msg[3], bldc_msg[0], bldc_msg[2]);
+      printf("%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f\n",(float)vel_left,(float)fAngle[0],angle_pid.output,fGyro[0],-left_pid.output,right_pid.output, bldc_msg[0], bldc_msg[2]);
 
     /***********PID_CONTROL************/
 

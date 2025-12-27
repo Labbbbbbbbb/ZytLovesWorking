@@ -10,8 +10,9 @@
 
 void setup() {
   Serial.begin(115200);
+  Serial1.begin(115200,SERIAL_8N1,16,17);
   DFOC_enable();
-  DFOC_Vbus(12.6);   //设定驱动器供电电压
+  DFOC_Vbus(12);   //设定驱动器供电电压
   DFOC_M0_alignSensor(7,-1);
   DFOC_M1_alignSensor(7,-1);
   //DFOC_M1_alignSensor(7,1);
@@ -42,31 +43,37 @@ void loop()
   // DFOC_M0_setVelocity(serial_motor_target());
 
   //位置-速度-力（加入电流环后）
-  DFOC_M0_SET_ANGLE_PID(1,0,0,100000,30);
-  DFOC_M0_SET_VEL_PID(0.02,1,0,100000,0.5);
-  DFOC_M0_SET_CURRENT_PID(5,200,0,100000);
-  DFOC_M0_set_Velocity_Angle(serial_motor_target());
+  //DFOC_M0_SET_ANGLE_PID(1,0,0,100000,30);
+  DFOC_M0_SET_VEL_PID(0.004,0.06,0,10000,0.7); //0.009，0.03    、、、0.008 0.02
+  DFOC_M0_SET_CURRENT_PID(5,200.0,0,100000);   //7，2       、、、4 2
+  //DFOC_M0_set_Velocity_Angle(serial_motor_target());
+   //DFOC_M0_setVelocity(serial_motor_target(0));
+  //DFOC_M0_setTorque(serial_motor_target(0));
 
   //位置-速度-力（加入电流环后）
-  DFOC_M1_SET_ANGLE_PID(1,0,0,100000,30);
-  DFOC_M1_SET_VEL_PID(0.02,1,0,100000,0.5);
-  DFOC_M1_SET_CURRENT_PID(5,200,0,100000);
-  DFOC_M1_set_Velocity_Angle(serial_motor_target());
+  //DFOC_M1_SET_ANGLE_PID(1,0,0,100000,30);
+  DFOC_M1_SET_VEL_PID(0.0035,0.05,0,10000,0.7);
+  DFOC_M1_SET_CURRENT_PID(5,200.0,0,100000);  //感觉电机的电流跟随能力还是比较一般。。。 5 200
+  //DFOC_M1_set_Velocity_Angle(serial_motor_target());
+  //DFOC_M1_setVelocity(serial_motor_target(1));
+  
   //电流力矩
   // DFOC_M1_SET_CURRENT_PID(5,200,0,100000);
   // DFOC_M0_SET_CURRENT_PID(5,200,0,100000);
   
-  // DFOC_M0_setTorque(serial_motor_target());
-  // DFOC_M1_setTorque(serial_motor_target());
+  DFOC_M0_setTorque(serial_motor_target(0)*1.0/100);
+  DFOC_M1_setTorque(serial_motor_target(1)*1.0/100);
 
 
   
   count++;
-  if(count>100)
+  if(count>50)
   {
       count=0;
       //Serial.printf("%f\n", DFOC_M0_Current());
-      Serial.printf("%f,%f,%f,%f\n", DFOC_M0_Current(),DFOC_M0_Angle(), DFOC_M0_Velocity(),serial_motor_target());
+      //Serial.printf("%f,%f,%f,%f\n", DFOC_M0_Current(),debug, DFOC_M0_Velocity(),serial_motor_target());
+      // Serial.printf("%f,%f,%f,%f\n", DFOC_M0_Current(),DFOC_M0_Velocity(),DFOC_M1_Current(),DFOC_M1_Velocity());
+      Serial1.printf("%f,%f,%f,%f\n", DFOC_M0_Current(),DFOC_M0_Velocity(),DFOC_M1_Current(),DFOC_M1_Velocity());
       // Serial.printf("%f,%f,%f\n", DFOC_M0_Angle(), S0_electricalAngle(),S1_electricalAngle());
       // Serial.printf("%f,%f,%f\n", DFOC_M0_Current(), DFOC_M1_Current(),serial_motor_target());
   }

@@ -28,6 +28,7 @@
 #include "jy901s.h"
 #include "wtr_calculate.h"
 #include "control.h"
+#include "RemoteCtr.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -113,6 +114,7 @@ int main(void)
   MX_TIM3_Init();
   MX_USART3_UART_Init();
   MX_TIM9_Init();
+  MX_UART4_Init();
   /* USER CODE BEGIN 2 */
   Control_Peripheral_init();
   Control_param_init();
@@ -123,15 +125,24 @@ int main(void)
     // }
     // __HAL_TIM_SetCompare(&htim2,TIM_CHANNEL_1,1500);
    //__HAL_TIM_SetCompare(&htim5,TIM_CHANNEL_1,1500);
+  HAL_UART_Receive_IT(&huart4, &rx_temp, 1);
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+    // 串口中断接收遥控器数据
+    if(buffer_received) 
+    {
+        buffer_received = 0;
+        printf("Received remote control data\n");         
+    }
+
     JY901S_Update();
     Angle_Control_Loop();
-    Velocity_Control_Loop(0,0);
+    Velocity_Control_Loop(forward_ref, turn_ref);
+    printf("%f, %f ,%#X ,%#X\n", forward_ref, turn_ref, rx_buffer[BUFFER_SIZE-2], rx_buffer[BUFFER_SIZE-1]);
       // uint32_t lenth=sprintf(buffer,"A%d\n",10);
       // HAL_UART_Transmit(&huart3, (uint8_t *)buffer, lenth, 100);
       // lenth=sprintf(buffer,"B%d\n",10);

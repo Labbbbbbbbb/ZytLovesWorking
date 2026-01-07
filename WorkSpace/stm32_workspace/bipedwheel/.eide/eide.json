@@ -25,9 +25,10 @@
   "targets": {
     "Debug": {
       "excludeList": [
-        "User/oled",
         "User/Retarget",
-        "User/AS5600"
+        "User/AS5600",
+        "User/oled/My_spi.c",
+        "User/oled/oled.c"
       ],
       "toolchain": "GCC",
       "compileConfig": {

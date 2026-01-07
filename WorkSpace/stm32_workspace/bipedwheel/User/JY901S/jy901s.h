@@ -4,6 +4,7 @@
 #include "stm32f4xx.h"   
 #include "usart.h"
 #include "wit_c_sdk.h" 
+#include "RemoteCtr.h"
 
 #define HUART huart1
 #define UART_INSTANCE USART1

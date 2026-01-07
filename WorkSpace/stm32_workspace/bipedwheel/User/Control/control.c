@@ -79,7 +79,7 @@ void Angle_Control_Loop()
 {
     // JY901S_Update();
     /***********ANGLE&GYRO_PID_CONTROL************/
-    angle_pid.ref=4;
+    angle_pid.ref=4.0;
     angle_pid.fdb=fAngle[0];
     PID_Calc(&angle_pid);
    //if(fAngle[0]>-1&&fAngle[0]<1)  //dead band
@@ -96,11 +96,14 @@ void Angle_Control_Loop()
 //forward的单位是轮子的rpm
 void Velocity_Control_Loop(float forward,float turn)
 {
-    turn_pid.ref=turn;
-    turn_pid.fdb=fGyro[2];  //Z轴陀螺仪
-    PID_Calc_P(&turn_pid);
-    left_velocity=forward+turn_pid.output;
-    right_velocity=forward-turn_pid.output;
+    //turn_pid.ref=turn;
+    //turn_pid.fdb=fGyro[2];  //Z轴陀螺仪
+    //PID_Calc_P(&turn_pid);
+    //left_velocity=forward+turn_pid.output;
+    //right_velocity=forward-turn_pid.output;
+    
+    left_velocity=forward+turn;
+    right_velocity=forward-turn;
 }
 
   uint8_t  bufferl[16] ;
@@ -130,7 +133,7 @@ void Wheel_Control_Loop()
       HAL_UART_Transmit(BLDC_UART, (uint8_t *)bufferr, lenth_r, 100);
       //HAL_Delay(8);
       //printf("%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f\n",(float)vel_left,(float)vel_right,angle_pid.output,fGyro[0],gyro_pid.output, bldc_msg[0], bldc_msg[2]);
-      printf("%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f\n",(float)vel_left,(float)fAngle[0],angle_pid.output,fGyro[0],-left_pid.output,right_pid.output, bldc_msg[0], bldc_msg[2]);
+      //printf("%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f\n",(float)vel_left,(float)fAngle[0],angle_pid.output,fGyro[0],-left_pid.output,right_pid.output, bldc_msg[0], bldc_msg[2]);
 
     /***********PID_CONTROL************/
 

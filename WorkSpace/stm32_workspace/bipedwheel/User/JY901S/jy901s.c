@@ -131,4 +131,19 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 	  parse_uart_data();
 	  HAL_UART_Receive_IT(huart, (uint8_t *)bldc_rxdata, 1);
   }
+  if(huart->Instance == UART4) //遥控串口接收也需要用串口中断回调函数，只能一起写这里了
+  {
+	buffer_received = 1;
+
+	rx_buffer[buffer_index]= rx_temp;
+
+	buffer_index++;
+	if(buffer_index >= BUFFER_SIZE) 
+	{
+		buffer_index = 0;
+	}
+
+    ProcessRemoteBuffer(rx_buffer);
+    HAL_UART_Receive_IT(&huart4, &rx_temp, 1);
+  }
 }

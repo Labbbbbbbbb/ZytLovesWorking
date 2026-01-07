@@ -79,7 +79,7 @@ void Angle_Control_Loop()
 {
     // JY901S_Update();
     /***********ANGLE&GYRO_PID_CONTROL************/
-    angle_pid.ref=4.0;
+    angle_pid.ref=6.0;
     angle_pid.fdb=fAngle[0];
     PID_Calc(&angle_pid);
    //if(fAngle[0]>-1&&fAngle[0]<1)  //dead band
@@ -132,8 +132,11 @@ void Wheel_Control_Loop()
       uint32_t lenth_r=sprintf(bufferr,"A%d\n", (int16_t)(right_pid.output*100));
       HAL_UART_Transmit(BLDC_UART, (uint8_t *)bufferr, lenth_r, 100);
       //HAL_Delay(8);
-      //printf("%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f\n",(float)vel_left,(float)vel_right,angle_pid.output,fGyro[0],gyro_pid.output, bldc_msg[0], bldc_msg[2]);
+
+      //printf("1\n");
+      printf("%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f\n",(float)vel_left,(float)vel_right,angle_pid.output,fGyro[0],gyro_pid.output, bldc_msg[0], bldc_msg[2]);
       //printf("%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f\n",(float)vel_left,(float)fAngle[0],angle_pid.output,fGyro[0],-left_pid.output,right_pid.output, bldc_msg[0], bldc_msg[2]);
+    //printf("%f, %f ,%#X ,%#X\n", forward_ref, turn_ref, rx_buffer[0], rx_buffer[1]);
 
     /***********PID_CONTROL************/
 

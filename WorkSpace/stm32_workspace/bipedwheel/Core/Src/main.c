@@ -136,13 +136,13 @@ int main(void)
     if(buffer_received) 
     {
         buffer_received = 0;
-        printf("Received remote control data\n");         
+        //printf("Received remote control data\n");         
     }
 
     JY901S_Update();
     Angle_Control_Loop();
     Velocity_Control_Loop(forward_ref, turn_ref);
-    printf("%f, %f ,%#X ,%#X\n", forward_ref, turn_ref, rx_buffer[BUFFER_SIZE-2], rx_buffer[BUFFER_SIZE-1]);
+    //printf("%f, %f ,%#X ,%#X\n", forward_ref, turn_ref, rx_buffer[BUFFER_SIZE-2], rx_buffer[BUFFER_SIZE-1]);
       // uint32_t lenth=sprintf(buffer,"A%d\n",10);
       // HAL_UART_Transmit(&huart3, (uint8_t *)buffer, lenth, 100);
       // lenth=sprintf(buffer,"B%d\n",10);

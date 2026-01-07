@@ -59,7 +59,7 @@ void Control_param_init()
     //with higher current level
     pid_init(&left_pid, 0.01, 0.0, 0.15, 1, 0,0.5);    //嗯似乎重新装了一遍机械后左右反过来了
     pid_init(&right_pid,0.01, 0.0, 0.15, 1, 0,0.5);    
-    pid_init(&angle_pid,40, 2.5, 2.5, 1000, 0,15);     //66 3.6 10  1000增量式 offset=25
+    pid_init(&angle_pid,35, 2.5, 2.5, 1000, 0,15);     //66 3.6 10  1000增量式 offset=25
     pid_init(&gyro_pid,0.05, 0.04 , 0.03, 65, 0,20);  //0.01 0.03 0.03 位置式 offset=25
     pid_init(&turn_pid,0.35, 0.1, 0.1, 10, 0,4);
     pid_init(&roll_pid,2, 1, 0.1, 100, 0,50);
@@ -79,7 +79,7 @@ void Angle_Control_Loop()
 {
     // JY901S_Update();
     /***********ANGLE&GYRO_PID_CONTROL************/
-    angle_pid.ref=0;
+    angle_pid.ref=4;
     angle_pid.fdb=fAngle[0];
     PID_Calc(&angle_pid);
    //if(fAngle[0]>-1&&fAngle[0]<1)  //dead band

@@ -24,7 +24,10 @@ void ProcessRemoteBuffer(uint8_t *(buffer))
     {
         Remote_X=(buffer[2]-0x30)*100+(buffer[3]-0x30)*10+(buffer[4]-0x30)-100;//负左正右
         Remote_Y=(buffer[5]-0x30)*100+(buffer[6]-0x30)*10+(buffer[7]-0x30)-100;//负后正前
-        forward_ref=Remote_Y*1.0/2;
-        turn_ref=-Remote_X*1.0/10;
+        if(Remote_Y>0) forward_ref=Remote_Y*1.0/30;  // /30
+        else forward_ref=Remote_Y*1.0/45;  // /30
+        turn_ref=-Remote_X*1.0/10;  // /6
+   
+
     }
 }

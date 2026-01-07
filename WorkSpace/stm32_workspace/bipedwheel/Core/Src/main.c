@@ -158,10 +158,11 @@ int main(void)
     // }
     //   HAL_Delay(1000);
     //Roll_Control_Loop();
+      Wheel_Control_Loop();
+
     /***********WHEEL_VELOCITY_PID_CONTROL************/
     if(tim_elapsed)
     {
-      Wheel_Control_Loop();
 		  tim_elapsed=0;
     }
     /* USER CODE END WHILE */

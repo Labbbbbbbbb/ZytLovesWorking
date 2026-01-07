@@ -79,7 +79,7 @@ void Angle_Control_Loop()
 {
     // JY901S_Update();
     /***********ANGLE&GYRO_PID_CONTROL************/
-    angle_pid.ref=6.0;
+    angle_pid.ref=6.0-forward_ref;
     angle_pid.fdb=fAngle[0];
     PID_Calc(&angle_pid);
    //if(fAngle[0]>-1&&fAngle[0]<1)  //dead band
@@ -101,7 +101,7 @@ void Velocity_Control_Loop(float forward,float turn)
     //PID_Calc_P(&turn_pid);
     //left_velocity=forward+turn_pid.output;
     //right_velocity=forward-turn_pid.output;
-    
+    forward=0;
     left_velocity=forward+turn;
     right_velocity=forward-turn;
 }
@@ -112,12 +112,12 @@ void Velocity_Control_Loop(float forward,float turn)
 void Wheel_Control_Loop()
 {
     
-      //vel_left=(int16_t)(gyro_pid.output+left_velocity);   //直立环的输出叠加车身的速度
-      //vel_right=(int16_t)(gyro_pid.output+right_velocity);
+      vel_left=(int16_t)(gyro_pid.output+left_velocity);   //直立环的输出叠加车身的速度
+      vel_right=(int16_t)(gyro_pid.output+right_velocity);
 
 
-      vel_left=(int16_t)(gyro_pid.output);   //直立环的输出叠加车身的速度
-      vel_right=(int16_t)(gyro_pid.output);
+      //vel_left=(int16_t)(gyro_pid.output);   //直立环的输出叠加车身的速度
+      //vel_right=(int16_t)(gyro_pid.output);
 
       left_pid.ref=-vel_left;
       left_pid.fdb=bldc_msg[1];   //BLDC Decoder Speed Feedback
@@ -134,7 +134,7 @@ void Wheel_Control_Loop()
       //HAL_Delay(8);
 
       //printf("1\n");
-      printf("%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f\n",(float)vel_left,(float)vel_right,angle_pid.output,fGyro[0],gyro_pid.output, bldc_msg[0], bldc_msg[2]);
+      printf("%.2f,%.2f,%.2f,%.2f,%.2f ,%.2f,%.2f\n",(float)vel_left,(float)vel_right, forward_ref, turn_ref,rx_buffer[0], rx_buffer[1], bldc_msg[2]);
       //printf("%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f\n",(float)vel_left,(float)fAngle[0],angle_pid.output,fGyro[0],-left_pid.output,right_pid.output, bldc_msg[0], bldc_msg[2]);
     //printf("%f, %f ,%#X ,%#X\n", forward_ref, turn_ref, rx_buffer[0], rx_buffer[1]);
 

@@ -50,19 +50,20 @@ void Control_Peripheral_init(void)
 
 void Control_param_init()
 {
-    // pid_init(&left_pid, 4, 1, 0.5, 100, 0,20);
-    // pid_init(&right_pid,4, 1, 0.5, 100, 0,20);
-    // pid_init(&angle_pid,1.5, 0, 0.1 , 40, 0,15);
-    // pid_init(&gyro_pid,0.5, 0.2 , 0.0, 55, 0,20);
-    // pid_init(&turn_pid,0.3, 0.1, 0.1, 10, 0,4);
+    pid_init(&left_pid, 0.01, 0.0, 0.15, 1, 0,0.5);    
+    pid_init(&right_pid,0.01, 0.0, 0.15, 1, 0,0.5);    
+    pid_init(&angle_pid,38+24.0/100*height_ref, 1.5, 2, 1500, 0,15);     //35+20.0/100*height_ref, 1.5, 2, 1500, 0,15
+    pid_init(&gyro_pid,0.03, 0.03 , 0.03, 65, 0,20);  //0.03, 0.03 , 0.03, 65, 0,20
+    // pid_init(&turn_pid,0.35, 0.1, 0.1, 10, 0,4);
+    // pid_init(&roll_pid,2, 1, 0.1, 100, 0,50);
 
     //with higher current level
-    pid_init(&left_pid, 0.01, 0.0, 0.15, 1, 0,0.5);    //嗯似乎重新装了一遍机械后左右反过来了
-    pid_init(&right_pid,0.01, 0.0, 0.15, 1, 0,0.5);    
-    pid_init(&angle_pid,35, 2.5, 2.5, 1000, 0,15);     //66 3.6 10  1000增量式 offset=25
-    pid_init(&gyro_pid,0.05, 0.04 , 0.03, 65, 0,20);  //0.01 0.03 0.03 位置式 offset=25
-    pid_init(&turn_pid,0.35, 0.1, 0.1, 10, 0,4);
-    pid_init(&roll_pid,2, 1, 0.1, 100, 0,50);
+    // pid_init(&left_pid, 0.01, 0.0, 0.15, 1, 0,0.5);    //嗯似乎重新装了一遍机械后左右反过来了
+    // pid_init(&right_pid,0.01, 0.0, 0.15, 1, 0,0.5);    
+    // pid_init(&angle_pid,55, 2, 3, 1500, 0,15);     //35, 2.5, 2.5, 1000, 0,15增量式 offset=30
+    // pid_init(&gyro_pid,0.06, 0.04 , 0.03, 65, 0,20);  //0.05, 0.04 , 0.03, 65, 0,20 位置式 offset=30
+    // pid_init(&turn_pid,0.35, 0.1, 0.1, 10, 0,4);
+    // pid_init(&roll_pid,2, 1, 0.1, 100, 0,50);
     IK_Param_Init();
 
     /*
@@ -77,9 +78,22 @@ void Control_param_init()
 
 void Angle_Control_Loop()
 {
-    // JY901S_Update();
-    /***********ANGLE&GYRO_PID_CONTROL************/
-    angle_pid.ref=6.0-forward_ref;
+    
+    //pid_init(&angle_pid,35+20.0/100*height_ref, 2, 3, 1500, 0,15);     //35, 2.5, 2.5, 1000, 0,15增量式 offset=30
+  
+    angle_pid.KP=38+24.0/100*height_ref;
+    angle_pid.KI=1.5+1.0/100*height_ref;
+      if(fabs(fAngle[0])>20+(100.0-height_ref)/20)  //防止翻车后pid风车
+    {
+        height_ref=0;
+        pid_init(&left_pid, 0.01, 0.0, 0.15, 1, 0,0.5);    
+        pid_init(&right_pid,0.01, 0.0, 0.15, 1, 0,0.5);    
+        pid_init(&angle_pid,35+20.0/100*height_ref, 1.5, 2, 1500, 0,15);     //35+20.0/100*height_ref, 1.5, 2, 1500, 0,15
+        pid_init(&gyro_pid,0.03, 0.03 , 0.03, 65, 0,20);  //0.03, 0.03 , 0.03, 65, 0,20
+
+    }
+    // /***********ANGLE&GYRO_PID_CONTROL************/
+    angle_pid.ref=1.1+(100.0-height_ref)/100*4.9-forward_ref; //6.0-
     angle_pid.fdb=fAngle[0];
     PID_Calc(&angle_pid);
    //if(fAngle[0]>-1&&fAngle[0]<1)  //dead band
@@ -126,15 +140,15 @@ void Wheel_Control_Loop()
       right_pid.fdb=bldc_msg[3]; //BLDC Decoder Speed Feedback
       PID_Calc_P(&right_pid);
 
-      uint32_t lenth_l=sprintf(bufferl,"B%d\n",(int16_t)(left_pid.output*100));
+      uint32_t lenth_l=sprintf(bufferl,"B%d\n",(int16_t)((left_pid.output+0.008*fAngle[0]+height_ref/15000.0*fAngle[0])*100)); //0.008*fAngle[0]
       HAL_UART_Transmit(BLDC_UART, (uint8_t *)bufferl, lenth_l, 100);
 
-      uint32_t lenth_r=sprintf(bufferr,"A%d\n", (int16_t)(right_pid.output*100));
+      uint32_t lenth_r=sprintf(bufferr,"A%d\n", (int16_t)((right_pid.output-0.008*fAngle[0]-height_ref/15000.0*fAngle[0])*100));
       HAL_UART_Transmit(BLDC_UART, (uint8_t *)bufferr, lenth_r, 100);
       //HAL_Delay(8);
 
       //printf("1\n");
-      printf("%.2f,%.2f,%.2f,%.2f,%.2f ,%.2f,%.2f\n",(float)vel_left,(float)vel_right, forward_ref, turn_ref,rx_buffer[0], rx_buffer[1], bldc_msg[2]);
+      printf("%.2f,%.2f,%.2f,%.2f,%d,%d,%d\n",(float)vel_left,(float)vel_right, forward_ref, height_ref,rx_buffer[0], rx_buffer[1],rx_buffer[8]);
       //printf("%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f\n",(float)vel_left,(float)fAngle[0],angle_pid.output,fGyro[0],-left_pid.output,right_pid.output, bldc_msg[0], bldc_msg[2]);
     //printf("%f, %f ,%#X ,%#X\n", forward_ref, turn_ref, rx_buffer[0], rx_buffer[1]);
 

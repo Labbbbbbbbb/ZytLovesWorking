@@ -25,6 +25,10 @@ extern uint8_t buffer_index;
 
 extern float forward_ref;
 extern float turn_ref;
+extern float height_ref; //0-100
+
+extern uint8_t up_flag;
+extern uint8_t down_flag;
 
 void ProcessRemoteBuffer(uint8_t *(buffer));
 

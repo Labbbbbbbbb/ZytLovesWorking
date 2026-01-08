@@ -29,6 +29,7 @@
 #include "wtr_calculate.h"
 #include "control.h"
 #include "RemoteCtr.h"
+#include "math.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -132,39 +133,24 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-    // 串口中断接收遥控器数据
-    if(buffer_received) 
-    {
-        buffer_received = 0;
-        //printf("Received remote control data\n");         
-    }
-
     JY901S_Update();
     Angle_Control_Loop();
     Velocity_Control_Loop(forward_ref, turn_ref);
-    //printf("%f, %f ,%#X ,%#X\n", forward_ref, turn_ref, rx_buffer[BUFFER_SIZE-2], rx_buffer[BUFFER_SIZE-1]);
-      // uint32_t lenth=sprintf(buffer,"A%d\n",10);
-      // HAL_UART_Transmit(&huart3, (uint8_t *)buffer, lenth, 100);
-      // lenth=sprintf(buffer,"B%d\n",10);
-      // HAL_UART_Transmit(&huart3, (uint8_t *)buffer, lenth, 100);
+    
     // __HAL_TIM_SetCompare(&htim5,TIM_CHANNEL_1,500);
     // __HAL_TIM_SetCompare(&htim5,TIM_CHANNEL_2,500);
     // __HAL_TIM_SetCompare(&htim5,TIM_CHANNEL_3,500);
     // __HAL_TIM_SetCompare(&htim5,TIM_CHANNEL_4,500);
     // for(int i=130;i>=30;i=i-5){
-    Servo_IK_Control(0,30); //范围30-130
-    Servo_IK_Control(1,30); //范围30-130
-    //   HAL_Delay(50);
-    // }
-    //   HAL_Delay(1000);
+    if(fabs(fAngle[0])>20+(100.0-height_ref)/20)  //防止翻车后pid风车
+    {
+        height_ref=0;
+    }
+    Servo_IK_Control(0,height_ref+30); //范围30-130
+    Servo_IK_Control(1,height_ref+30); //范围30-130
+    
     //Roll_Control_Loop();
       Wheel_Control_Loop();
-
-    /***********WHEEL_VELOCITY_PID_CONTROL************/
-    if(tim_elapsed)
-    {
-		  tim_elapsed=0;
-    }
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */

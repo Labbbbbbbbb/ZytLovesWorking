@@ -73,7 +73,7 @@ PUTCHAR_PROTOTYPE
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-uint32_t tim_mark[2];
+uint8_t tim_elapsed;
 
 /* USER CODE END 0 */
 
@@ -119,6 +119,13 @@ int main(void)
   /* USER CODE BEGIN 2 */
   Control_Peripheral_init();
   Control_param_init();
+  // printf("B%d\n",0);
+    // for(int16_t i=100;i>0;i--){
+    //   printf("A%d\n",i);
+    //   HAL_Delay(1);
+    // }
+    // __HAL_TIM_SetCompare(&htim2,TIM_CHANNEL_1,1500);
+   //__HAL_TIM_SetCompare(&htim5,TIM_CHANNEL_1,1500);
   HAL_UART_Receive_IT(&huart4, &rx_temp, 1);
   /* USER CODE END 2 */
 
@@ -126,8 +133,10 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-    tim_mark[1]=tim_mark[0];//previous time
-    tim_mark[0]=HAL_GetTick();//current time
+    JY901S_Update();
+    Angle_Control_Loop();
+    Velocity_Control_Loop(forward_ref, turn_ref);
+    
     // __HAL_TIM_SetCompare(&htim5,TIM_CHANNEL_1,500);
     // __HAL_TIM_SetCompare(&htim5,TIM_CHANNEL_2,500);
     // __HAL_TIM_SetCompare(&htim5,TIM_CHANNEL_3,500);
@@ -137,16 +146,11 @@ int main(void)
     {
         height_ref=0;
     }
-
-    //height_ref=0;//0-108
     Servo_IK_Control(0,height_ref+30); //范围30-130
     Servo_IK_Control(1,height_ref+30); //范围30-130
     
     //Roll_Control_Loop();
-    JY901S_Update();
-    Angle_Control_Loop(0.0);
-    Velocity_Control_Loop(forward_ref, turn_ref);
-    Wheel_Control_Loop();
+      Wheel_Control_Loop();
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -201,13 +205,13 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
-// void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
-// {
-//   if(htim->Instance == TIM1)
-//   {
-//     tim_elapsed = 1;
-//   }
-// }
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
+{
+  if(htim->Instance == TIM1)
+  {
+    tim_elapsed = 1;
+  }
+}
 /* USER CODE END 4 */
 
 /**

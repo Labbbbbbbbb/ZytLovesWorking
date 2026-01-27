@@ -28,7 +28,8 @@
         "User/Retarget",
         "User/AS5600",
         "User/oled/My_spi.c",
-        "User/oled/oled.c"
+        "User/oled/oled.c",
+        "User/fuzzy_pid"
       ],
       "toolchain": "GCC",
       "compileConfig": {

@@ -7,7 +7,7 @@ PID_t angle_pid;
 PID_t gyro_pid;
 PID_t turn_pid;
 PID_t roll_pid;
-
+PID_t speed_pid;
 
 int16_t left_cnt;  
 int16_t right_cnt;
@@ -52,8 +52,9 @@ void Control_param_init()
 {
     pid_init(&left_pid, 0.01, 0.0, 0.15, 1, 0,0.5);    
     pid_init(&right_pid,0.01, 0.0, 0.15, 1, 0,0.5);    
-    pid_init(&angle_pid,38+24.0/100*height_ref, 1.5, 2, 1500, 0,15);     //35+20.0/100*height_ref, 1.5, 2, 1500, 0,15
-    pid_init(&gyro_pid,0.03, 0.03 , 0.03, 65, 0,20);  //0.03, 0.03 , 0.03, 65, 0,20
+    pid_init(&angle_pid,12, 1, 2, 1500, 0,15);     //35+20.0/100*height_ref, 1.5, 2, 1500, 0,15
+    pid_init(&gyro_pid,0.16, 0.03 , 0.03, 65, 0,20);  //0.03, 0.03 , 0.03, 65, 0,20
+    pid_init(&speed_pid,0.005, 0.03 , 0.0, 1, 0,0.5);  //0.03, 0.03 , 0.03, 65, 0,20
     // pid_init(&turn_pid,0.35, 0.1, 0.1, 10, 0,4);
     // pid_init(&roll_pid,2, 1, 0.1, 100, 0,50);
 
@@ -81,19 +82,19 @@ void Angle_Control_Loop()
     
     //pid_init(&angle_pid,35+20.0/100*height_ref, 2, 3, 1500, 0,15);     //35, 2.5, 2.5, 1000, 0,15增量式 offset=30
   
-    angle_pid.KP=38+24.0/100*height_ref;
-    angle_pid.KI=1.5+1.0/100*height_ref;
-      if(fabs(fAngle[0])>20+(100.0-height_ref)/20)  //防止翻车后pid风车
-    {
-        height_ref=0;
-        pid_init(&left_pid, 0.01, 0.0, 0.15, 1, 0,0.5);    
-        pid_init(&right_pid,0.01, 0.0, 0.15, 1, 0,0.5);    
-        pid_init(&angle_pid,35+20.0/100*height_ref, 1.5, 2, 1500, 0,15);     //35+20.0/100*height_ref, 1.5, 2, 1500, 0,15
-        pid_init(&gyro_pid,0.03, 0.03 , 0.03, 65, 0,20);  //0.03, 0.03 , 0.03, 65, 0,20
+    // angle_pid.KP=38+24.0/100*height_ref;
+    // angle_pid.KI=1.5+1.0/100*height_ref;
+    //   if(fabs(fAngle[0])>20+(100.0-height_ref)/20)  //防止翻车后pid风车
+    // {
+    //     height_ref=0;
+    //     pid_init(&left_pid, 0.01, 0.0, 0.15, 1, 0,0.5);    
+    //     pid_init(&right_pid,0.01, 0.0, 0.15, 1, 0,0.5);    
+    //     pid_init(&angle_pid,25+20.0/100*height_ref, 1.9, 2, 1500, 0,15);     //35+20.0/100*height_ref, 1.5, 2, 1500, 0,15
+    //     pid_init(&gyro_pid,0.04, 0.03 , 0.03, 65, 0,20);  //0.03, 0.03 , 0.03, 65, 0,20
 
-    }
+    // }
     // /***********ANGLE&GYRO_PID_CONTROL************/
-    angle_pid.ref=1.1+(100.0-height_ref)/100*4.9-forward_ref; //6.0-
+    angle_pid.ref=0; //6.0-
     angle_pid.fdb=fAngle[0];
     PID_Calc(&angle_pid);
    //if(fAngle[0]>-1&&fAngle[0]<1)  //dead band
@@ -115,9 +116,11 @@ void Velocity_Control_Loop(float forward,float turn)
     //PID_Calc_P(&turn_pid);
     //left_velocity=forward+turn_pid.output;
     //right_velocity=forward-turn_pid.output;
-    forward=0;
-    left_velocity=forward+turn;
-    right_velocity=forward-turn;
+    speed_pid.ref=forward;
+    speed_pid.fdb=(-bldc_msg[1]+bldc_msg[3])/2.0;  //BLDC Decoder Speed Feedback
+    PID_Calc_P(&speed_pid);
+    left_velocity=speed_pid.output+turn;
+    right_velocity=speed_pid.output-turn;
 }
 
   uint8_t  bufferl[16] ;
@@ -126,8 +129,8 @@ void Velocity_Control_Loop(float forward,float turn)
 void Wheel_Control_Loop()
 {
     
-      vel_left=(int16_t)(gyro_pid.output+left_velocity);   //直立环的输出叠加车身的速度
-      vel_right=(int16_t)(gyro_pid.output+right_velocity);
+      vel_left=(int16_t)(gyro_pid.output);   //直立环的输出叠加车身的速度
+      vel_right=(int16_t)(gyro_pid.output);
 
 
       //vel_left=(int16_t)(gyro_pid.output);   //直立环的输出叠加车身的速度
@@ -140,15 +143,15 @@ void Wheel_Control_Loop()
       right_pid.fdb=bldc_msg[3]; //BLDC Decoder Speed Feedback
       PID_Calc_P(&right_pid);
 
-      uint32_t lenth_l=sprintf(bufferl,"B%d\n",(int16_t)((left_pid.output+0.008*fAngle[0]+height_ref/15000.0*fAngle[0])*100)); //0.008*fAngle[0]
+      uint32_t lenth_l=sprintf(bufferl,"B%d\n",(int16_t)((left_pid.output-left_velocity+0.008*fAngle[0]+height_ref/15000.0*fAngle[0])*100)); //0.008*fAngle[0]
       HAL_UART_Transmit(BLDC_UART, (uint8_t *)bufferl, lenth_l, 100);
 
-      uint32_t lenth_r=sprintf(bufferr,"A%d\n", (int16_t)((right_pid.output-0.008*fAngle[0]-height_ref/15000.0*fAngle[0])*100));
+      uint32_t lenth_r=sprintf(bufferr,"A%d\n", (int16_t)((right_pid.output+right_velocity-0.008*fAngle[0]-height_ref/15000.0*fAngle[0])*100));
       HAL_UART_Transmit(BLDC_UART, (uint8_t *)bufferr, lenth_r, 100);
       //HAL_Delay(8);
 
       //printf("1\n");
-      printf("%.2f,%.2f,%.2f,%.2f,%d,%d,%d\n",(float)vel_left,(float)vel_right, forward_ref, height_ref,rx_buffer[0], rx_buffer[1],rx_buffer[8]);
+      printf("%.2f,%.2f,%.2f,%.2f,%d,%d,%d\n",(float)angle_pid.output,(float)gyro_pid.output, speed_pid.output, speed_pid.fdb,rx_buffer[0],bldc_msg[1],bldc_msg[3]);
       //printf("%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f\n",(float)vel_left,(float)fAngle[0],angle_pid.output,fGyro[0],-left_pid.output,right_pid.output, bldc_msg[0], bldc_msg[2]);
     //printf("%f, %f ,%#X ,%#X\n", forward_ref, turn_ref, rx_buffer[0], rx_buffer[1]);
 

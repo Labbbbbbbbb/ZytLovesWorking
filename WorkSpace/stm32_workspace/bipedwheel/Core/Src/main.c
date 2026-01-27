@@ -144,6 +144,7 @@ int main(void)
     
     //Roll_Control_Loop();
     JY901S_Update();
+    Angle_Control_Loop(0.0);
     Velocity_Control_Loop(forward_ref, turn_ref);
     Wheel_Control_Loop();
     /* USER CODE END WHILE */

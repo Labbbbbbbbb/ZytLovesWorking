@@ -56,9 +56,9 @@ void Control_Peripheral_init(void)
 
 void Control_param_init()
 {
-    base_angle_kp=2.50;
-    base_angle_ki=0;
-    base_angle_kd=0.02;//3
+    base_angle_kp=2.0588;//2.0588  3.5
+    base_angle_ki=0.1157;//130/1000/60
+    base_angle_kd=8.1764;//3
 
     base_gyro_kp=0.12;
     base_gyro_ki=0.09;
@@ -68,9 +68,9 @@ void Control_param_init()
     base_vel_ki=0.0;
     base_vel_kd=0.03;//3
 
-    pid_init(&vel_pid,base_vel_kp, base_vel_ki, base_vel_kd, 6, 0, 2);  //
-    pid_init(&angle_pid,base_angle_kp, base_angle_ki, base_angle_kd, 500, 0, 15);     //
-    pid_init(&gyro_pid,base_gyro_kp, base_gyro_ki , base_gyro_kd, 120, 0, 45);  //
+    //pid_init(&vel_pid,base_vel_kp, base_vel_ki, base_vel_kd, 6, 0, 2);  //
+    pid_init(&angle_pid,base_angle_kp, base_angle_ki, base_angle_kd, 120, 0, 90);     //
+    //pid_init(&gyro_pid,base_gyro_kp, base_gyro_ki , base_gyro_kd, 120, 0, 45);  //
 
 
     //with higher current level
@@ -106,28 +106,28 @@ void Angle_Control_Loop(float ref)
 
     // }
     /***********ANGLE&GYRO_PID_CONTROL************/ 
-    angle_pid.ref=0; //+forward
-    angle_pid.fdb=tan((-(1+ref)+fAngle[0])/180*3.14)*180/3.14*(fmax(fabs((1+ref-fAngle[0])),1.0f)); //角度环反馈带死区
+    angle_pid.ref=2.6; //+forward
+    angle_pid.fdb=fAngle[0]; //角度环反馈带死区n    tan((-(1+ref)+fAngle[0])/180*3.14)*180/3.14*(fmax(fabs((1+ref-fAngle[0])),1.0f))    
     PID_Calc_P(&angle_pid);
 
    /*Angle -- fuzzy pid control*/
-    double delta_Kp, delta_Ki, delta_Kd;
-    fuzzy_inference(angle_pid.cur_error, angle_pid.cur_error - angle_pid.error[1], &delta_Kp, &delta_Ki, &delta_Kd);
-    angle_pid.KP = base_angle_kp + delta_Kp;
-    angle_pid.KI = base_angle_ki + delta_Ki;
-    angle_pid.KD = base_angle_kd + delta_Kd;
-    fuzzy_pid_update(&angle_pid, angle_pid.cur_error, 1.0f/1000*(tim_mark[0]-tim_mark[1])); 
+    // double delta_Kp, delta_Ki, delta_Kd;
+    // fuzzy_inference(angle_pid.cur_error, angle_pid.cur_error - angle_pid.error[1], &delta_Kp, &delta_Ki, &delta_Kd);
+    // angle_pid.KP = base_angle_kp + delta_Kp;
+    // angle_pid.KI = base_angle_ki + delta_Ki;
+    // angle_pid.KD = base_angle_kd + delta_Kd;
+    // fuzzy_pid_update(&angle_pid, angle_pid.cur_error, 1.0f/1000*(tim_mark[0]-tim_mark[1])); 
    /*Angle -- fuzzy pid control*/
 
-    gyro_pid.ref=angle_pid.output;   //Gyro_Loop
-    gyro_pid.fdb=fGyro[0];
-    PID_Calc_P(&gyro_pid);
+    // gyro_pid.ref=angle_pid.output;   //Gyro_Loop
+    // gyro_pid.fdb=fGyro[0];
+    // PID_Calc_P(&gyro_pid);
    /*Gyro -- fuzzy pid control*/
-    fuzzy_inference(gyro_pid.cur_error, gyro_pid.cur_error - gyro_pid.error[1], &delta_Kp, &delta_Ki, &delta_Kd);
-    gyro_pid.KP = base_gyro_kp + delta_Kp;
-    gyro_pid.KI = base_gyro_ki + delta_Ki;
-    gyro_pid.KD = base_gyro_kd + delta_Kd;
-    fuzzy_pid_update(&gyro_pid, gyro_pid.cur_error, 1.0f/1000*(tim_mark[0]-tim_mark[1])); 
+    // fuzzy_inference(gyro_pid.cur_error, gyro_pid.cur_error - gyro_pid.error[1], &delta_Kp, &delta_Ki, &delta_Kd);
+    // gyro_pid.KP = base_gyro_kp + delta_Kp;
+    // gyro_pid.KI = base_gyro_ki + delta_Ki;
+    // gyro_pid.KD = base_gyro_kd + delta_Kd;
+    // fuzzy_pid_update(&gyro_pid, gyro_pid.cur_error, 1.0f/1000*(tim_mark[0]-tim_mark[1])); 
    /*Gyro -- fuzzy pid control*/
 
   /***********ANGLE&GYRO_PID_CONTROL************/
@@ -140,9 +140,8 @@ void Velocity_Control_Loop(float forward,float turn)
     vel_pid.ref=forward;
     vel_pid.fdb=1.0f*(-bldc_msg[3]+bldc_msg[1])/2.0;
     PID_Calc_P(&vel_pid);
-    Angle_Control_Loop(vel_pid.ref);
-    left_velocity=gyro_pid.output - turn; //注意！这里两个速度的量的含义是目标电流的一百倍
-    right_velocity=gyro_pid.output + turn;
+    left_velocity=angle_pid.output - turn + vel_pid.output; //注意！这里两个速度的量的含义是目标电流的一百倍
+    right_velocity=angle_pid.output + turn + vel_pid.output;
 
 }
 
@@ -205,10 +204,10 @@ void Servo_IK_Control(uint8_t index,float height)
     // if(IKParam.XRight<-10) IKParam.XRight=-10;  
     // if (IKParam.XLeft>L5) IKParam.XLeft=L5;
     // if (IKParam.XRight>L5) IKParam.XRight=L5;
-    IKParam.XLeft=L5/2;//L5/2
+    IKParam.XLeft=L5/2-4;//L5/2
     IKParam.YLeft=height;
     IKParam.XRight=L5/2;
-    IKParam.YRight=height;
+    IKParam.YRight=height+8;
   float alpha1,alpha2,beta1,beta2;
   __IO uint16_t servoLeftFront,servoLeftRear,servoRightFront,servoRightRear;
 

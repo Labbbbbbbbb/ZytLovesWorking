@@ -2,14 +2,13 @@
 // ========================
 // 1. 定义模糊集合符号
 // ========================
-#define NB -3.0  // Negative Big
-#define NM -2.0  // Negative Medium
-#define NS -1.0  // Negative Small
+#define NB -0.30  // Negative Big
+#define NM -0.20  // Negative Medium
+#define NS -0.10  // Negative Small
 #define ZO  0.0  // Zero
-#define PS  1.0  // Positive Small
-#define PM  2.0  // Positive Medium
-#define PB  3.0  // Positive Big
-
+#define PS  0.10  // Positive Small
+#define PM  0.20  // Positive Medium
+#define PB  0.30  // Positive Big
 // 三角形隶属函数
 double trimf(double x, double a, double b, double c) {
     if (x <= a || x >= c) return 0.0;
@@ -25,23 +24,23 @@ void fuzzy_inference(double e, double ec, double *delta_Kp, double *delta_Ki, do
     
     // 计算输入隶属度
     double e_mf[7] = {
-        trimf(e, -0.5, -0.5, -0.25), // NB
-        trimf(e, -0.4, -0.25, -0.1), // NM
-        trimf(e, -0.2, -0.1, 0.0),   // NS
-        trimf(e, -0.1, 0.0, 0.1),    // ZO
-        trimf(e, 0.0, 0.1, 0.2),     // PS
-        trimf(e, 0.1, 0.25, 0.4),    // PM
-        trimf(e, 0.25, 0.5, 0.5)     // PB
+        trimf(e, -50, -50, -35), // NB
+        trimf(e, -35, -20, -15), // NM
+        trimf(e, -15, -12, 9),   // NS
+        trimf(e, -9, 0.0, 9),    // ZO
+        trimf(e, 9, 12, 15),     // PS
+        trimf(e, 12, 15, 20),    // PM
+        trimf(e, 15, 20, 25)     // PB
     };
     
     double ec_mf[7] = {
-        trimf(ec, -2, -2, -1), // NB
-        trimf(ec, -1.5, -1, -0.5), // NM
-        trimf(ec, -1, -0.5, 0), // NS
-        trimf(ec, -0.5, 0, 0.5), // ZO
-        trimf(ec, 0, 0.5, 1), // PS
-        trimf(ec, 0.5, 1, 1.5), // PM
-        trimf(ec, 1, 2, 2) // PB
+        trimf(ec, -200, -170, -140), // NB
+        trimf(ec, -140, -110, -80), // NM
+        trimf(ec, -80, -50, -20), // NS
+        trimf(ec, -20, 0, 20), // ZO
+        trimf(ec, 20, 50, 80), // PS
+        trimf(ec, 80, 110, 140), // PM
+        trimf(ec, 140, 170, 200) // PB
     };
 
     // ========================

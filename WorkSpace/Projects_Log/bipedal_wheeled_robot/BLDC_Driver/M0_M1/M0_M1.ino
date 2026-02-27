@@ -1,4 +1,4 @@
-//DengFOC V0.2
+  //DengFOC V0.2
 //灯哥开源，遵循GNU协议，转载请著名版权！
 //GNU开源协议（GNU General Public License, GPL）是一种自由软件许可协议，保障用户能够自由地使用、研究、分享和修改软件。
 //该协议的主要特点是，要求任何修改或衍生的作品必须以相同的方式公开发布，即必须开源。此外，该协议也要求在使用或分发软件时，必须保留版权信息和许可协议。GNU开源协议是自由软件基金会（FSF）制定和维护的一种协议，常用于GNU计划的软件和其他自由软件中。
@@ -73,7 +73,7 @@ void loop()
       //Serial.printf("%f\n", DFOC_M0_Current());
       //Serial.printf("%f,%f,%f,%f\n", DFOC_M0_Current(),debug, DFOC_M0_Velocity(),serial_motor_target());
       // Serial.printf("%f,%f,%f,%f\n", DFOC_M0_Current(),DFOC_M0_Velocity(),DFOC_M1_Current(),DFOC_M1_Velocity());
-      Serial1.printf("%f,%f,%f,%f\n", DFOC_M0_Current(),DFOC_M0_Velocity(),DFOC_M1_Current(),DFOC_M1_Velocity());
+      Serial1.printf("%f,%f,%f,%f\n", DFOC_M0_Angle(),DFOC_M0_Velocity(),DFOC_M1_Angle(),DFOC_M1_Velocity());
       // Serial.printf("%f,%f,%f\n", DFOC_M0_Angle(), S0_electricalAngle(),S1_electricalAngle());
       // Serial.printf("%f,%f,%f\n", DFOC_M0_Current(), DFOC_M1_Current(),serial_motor_target());
   }

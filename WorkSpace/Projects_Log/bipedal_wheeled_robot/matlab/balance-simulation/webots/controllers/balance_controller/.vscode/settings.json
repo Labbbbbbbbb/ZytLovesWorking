@@ -1,0 +1,18 @@
+{
+    "files.associations": {
+        "robot.h": "c",
+        "pid.h": "c",
+        "stdio.h": "c",
+        "inertial_unit.h": "c",
+        "types.h": "c",
+        "balance.h": "c",
+        "keyboard.h": "c",
+        "stdint.h": "c",
+        "memory.h": "c",
+        "stdlib.h": "c",
+        "accelerometer.h": "c",
+        "user_lib.h": "c",
+        "linknleg.h": "c",
+        "position_sensor.h": "c"
+    }
+}

@@ -1,0 +1,32 @@
+{
+    "configurations": [
+        {
+            "name": "Win32",
+            "includePath": [
+                "${workspaceRoot}\\balance",
+                "${workspaceRoot}\\algorithm",
+            	//该目录为webots库头文件所在目录
+                "D:\\Program Files\\Webots\\include\\controller\\c"
+            ],
+            "defines": [
+                "${default}"
+            ],
+            "compileCommands": "${default}",
+            "browse": {
+                "limitSymbolsToIncludedHeaders": true,
+                "databaseFilename": "${default}",
+                "path": [
+                    "${default}",
+                    //该目录为webots动态链接库文件所在目录
+                    "D:\\Program Files\\Webots\\lib\\controller"
+                ]
+            },
+            "compilerPath": "D:\\MinGW\\bin\\gcc.exe",
+            "cStandard": "c17",
+            "cppStandard": "gnu++14",
+            "intelliSenseMode": "windows-gcc-x86",
+            "configurationProvider": "ms-vscode.makefile-tools"
+        }
+    ],
+    "version": 4
+}
